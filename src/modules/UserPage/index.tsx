@@ -1,7 +1,7 @@
 import React, { memo, useState, useContext } from 'react';
 import type { FormProps } from 'antd';
 import { Layout, Row, Col, Form, Input, Button, App } from 'antd';
-import { userLog, setStore, getStore } from '@common/electron';
+import { userLog, setStore } from '@common/electron';
 import request from '@common/request';
 import { MainContext } from '@common/context';
 import Logo from '@components/Logo';
@@ -40,48 +40,47 @@ const UserPage: React.FC = () => {
   // 执行登录
   const onLogin: FormProps<FieldType>['onFinish'] = async (values) => {
     userLog('Submit Login:', values);
-    // 登录是从缓存中获取用户列表，然后判断用户名和密码是否正确
-    const userList = getStore('userList') || [];
-    const user = userList.find((user: any) => user.name === values.username && user.password === values.password);
-    if (!user) {
-      message.error(`用户名或密码错误`);
+    const result = await request.post('/user/login', {
+      name: values.username,
+      password: values.password,
+    });
+    userLog('Submit Login Result:', result);
+    if (!result || !result.data || !result.data.id) {
+      message.error(`请检查用户名和密码是否正确，失败原因：${result?.data?.error}`);
       return;
     }
+
     message.success(`登录成功`);
+    const user = result.data;
     setStore('loginData', user);
     setUserInfo({
       id: user.id,
       name: user.name,
       avatar: user.avatar,
-      role: user.role,
     });
   };
 
   // 执行注册
   const onRegister: FormProps<RegFieldType>['onFinish'] = async (values) => {
     userLog('Submit Register:', values);
-    const userList = getStore('userList') || [];
-    const user = userList.find((user: any) => user.name === values.regname);
-    if (user) {
-      message.error(`用户名已存在`);
-      return;
-    }
-    const newUser = {
-      id: userList.length + 1,
+    const result = await request.post('/user/register', {
       name: values.regname,
       password: values.regpwd,
+      mail: '',
       avatar: values.regname.substring(0,1),
-      role: 'normal',
-    };
-    userList.push(newUser);
-    setStore('userList', userList);
+    });
+    userLog('Submit Register Result:', result);
+    if (!result || !result.data || !result.data.id) {
+      message.error(`注册失败：${result?.data?.error}`);
+      return;
+    }
     message.success(`注册成功，已自动为你登录`);
-    setStore('loginData', newUser);
+    const user = result.data;
+    setStore('loginData', user);
     setUserInfo({
-      id: newUser.id,
-      name: newUser.name,
-      avatar: newUser.avatar,
-      role: newUser.role,
+      id: user.id,
+      name: user.name,
+      avatar: user.avatar,
     });
   };
 

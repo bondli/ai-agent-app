@@ -29,19 +29,19 @@ notification.config({
 });
 
 
-import { initToolbar, type ToolbarConfig } from '@stagewise/toolbar';
+// import { initToolbar, type ToolbarConfig } from '@stagewise/toolbar';
 
-const stagewiseConfig: ToolbarConfig = {
-  plugins: [],
-};
+// const stagewiseConfig: ToolbarConfig = {
+//   plugins: [],
+// };
 
-function setupStagewise() {
-  if (import.meta.env.DEV) {
-    initToolbar(stagewiseConfig);
-  }
-}
+// function setupStagewise() {
+//   if (import.meta.env.DEV) {
+//     initToolbar(stagewiseConfig);
+//   }
+// }
 
-setupStagewise();
+// setupStagewise();
 
 const root = createRoot(document.getElementById('root'));
 root.render(

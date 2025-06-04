@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import logger from 'electron-log';
 import { VoltAgent, Agent } from '@voltagent/core';
 import { VercelAIProvider } from '@voltagent/vercel-ai'; // Example provider
 import { openai } from '@ai-sdk/openai'; // Example model
@@ -24,5 +25,8 @@ new VoltAgent({
 });
 
 if (typeof process.send === 'function') {
-  process.send({ type: 'server-started', port: 3141 });
+  logger.info('AI Agent Server is running on port 3141');
+  if (typeof process.send === 'function') {
+    process.send('AI Agent Server Ready');
+  }
 }

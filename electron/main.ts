@@ -43,40 +43,74 @@ const initIpcRenderer = () => {
 // 定义ipcRenderer监听事件
 initIpcRenderer();
 
-// 启动服务器
-let serverStatus = '';
-const startNodeServer = () => {
-  logger.info('server will be start');
+// 启动AI Agent服务器
+let aiagentServerStatus = '';
+let aiagentChild: any = null;
+const startAiAgentServer = () => {
+  logger.info('AI Agent Server will be start');
 
-  const child = fork(path.join(__dirname, 'aiagent', 'index'), [], {
+  aiagentChild = fork(path.join(__dirname, 'aiagent', 'index'), [], {
     env: {
       ...process.env,
       NODE_ENV: process.env.NODE_ENV || 'production',
     },
   });
 
-  child.on('error', (err) => {
-    logger.info('server error:', err);
+  aiagentChild.on('error', (err) => {
+    logger.info('AI Agent Server error:', err);
   });
 
-  child.on('message', (data) => {
-    logger.info('server stdout: ' , data);
-    serverStatus = 'success';
+  aiagentChild.on('message', (data) => {
+    logger.info('AI Agent Server stdout: ' , data);
+    aiagentServerStatus = 'success';
   });
 
-  child.on('exit', (code, signal) => {
-    logger.info('server exit code: ', code);
-    logger.info('server exit signal: ', signal);
+  aiagentChild.on('exit', (code, signal) => {
+    logger.info('AI Agent Server exit code: ', code);
+    logger.info('AI Agent Server exit signal: ', signal);
   });
 
-  child.unref();
-  //on parent process exit, terminate child process too.
-  process.on('exit', () => {
-    child.kill();
-  });
+  aiagentChild.unref();
 };
 
-startNodeServer();
+// 启动ApiServer服务器
+let apiServerStatus = '';
+let apiServerChild: any = null;
+const startApiServer = () => {
+  logger.info('API Server will be start');
+
+  apiServerChild = fork(path.join(__dirname, 'apiserver', 'index'), [], {
+    env: {
+      ...process.env,
+      NODE_ENV: process.env.NODE_ENV || 'production',
+    },
+  });
+
+  apiServerChild.on('error', (err) => {
+    logger.info('API Server error:', err);
+  });
+
+  apiServerChild.on('message', (data) => {
+    logger.info('API Server stdout: ' , data);
+    apiServerStatus = 'success';
+  });
+
+  apiServerChild.on('exit', (code, signal) => {
+    logger.info('API Server exit code: ', code);
+    logger.info('API Server exit signal: ', signal);
+  });
+
+  apiServerChild.unref();
+};
+
+startAiAgentServer();
+startApiServer();
+
+//on parent process exit, terminate child process too.
+process.on('exit', () => {
+  aiagentChild.kill();
+  apiServerChild.kill();
+});
 
 let mainWindow: any = null;
 
@@ -111,14 +145,14 @@ const createWindow = () => {
   };
 
   // 服务起来之后再打开界面，否则出现加载不到数据，延迟100ms来检查
-  if (serverStatus === 'success') {
+  if (aiagentServerStatus === 'success' && apiServerStatus === 'success') {
     logger.info('server is startup before main window create');
     openWin();
   } else {
     let timer = 0;
     const t = setInterval(() => {
       timer ++;
-      if (serverStatus === 'success' || timer >= 50) { // 服务起来了，或者超过5s还没有起来，就不管了，结束轮询
+      if (aiagentServerStatus === 'success' && apiServerStatus === 'success' || timer >= 50) { // 服务起来了，或者超过5s还没有起来，就不管了，结束轮询
         openWin();
         timer = 0;
         clearInterval(t);

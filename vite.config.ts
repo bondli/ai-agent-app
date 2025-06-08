@@ -60,7 +60,7 @@ export default defineConfig(({ command, mode }) => {
     },
     server: {
       cors: true,
-      open: true,
+      open: false,
       hmr: true,
       host: true,
       port: 3000,

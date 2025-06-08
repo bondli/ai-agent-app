@@ -1518,7 +1518,7 @@
     lodash "^4.17.15"
     tmp-promise "^3.0.2"
 
-"@modelcontextprotocol/sdk@^1.10.1":
+"@modelcontextprotocol/sdk@^1.10.1", "@modelcontextprotocol/sdk@^1.12.1":
   version "1.12.1"
   resolved "https://npm.corp.kuaishou.com/@modelcontextprotocol/sdk/-/sdk-1.12.1.tgz#f77503f0263b33cb1e5b81a6ff0c322393cabd37"
   integrity sha512-KG1CZhZfWg+u8pxeM/mByJDScJSrjjxLc8fwQqbsS8xCjBmQfMNEBTotYdNanKekepnfRI85GtgQlctLFpcYPw==
@@ -2238,7 +2238,7 @@
     update-notifier "^5.1.0"
     uuid "^9.0.1"
 
-"@voltagent/core@^0.1.20", "@voltagent/core@^0.1.22":
+"@voltagent/core@^0.1.20":
   version "0.1.22"
   resolved "https://npm.corp.kuaishou.com/@voltagent/core/-/core-0.1.22.tgz#472743cde10c32fe60758e99539fb20f2db29d0f"
   integrity sha512-kcv+nx8vvRV93wnphJEh4PuFGbdql0FAMvXi5w6rGPZbAxpB2dpBcgdvUj2IJqqh8ywFDCNQC+Ccbp5GjbohFg==
@@ -2260,6 +2260,28 @@
     ws "^8.18.1"
     zod "3.24.2"
 
+"@voltagent/core@^0.1.29", "@voltagent/core@^0.1.30":
+  version "0.1.30"
+  resolved "https://npm.corp.kuaishou.com/@voltagent/core/-/core-0.1.30.tgz#808e2b248ac3d08f23dc685499b4db8d235749a4"
+  integrity sha512-sh0tjeu/jesWgkL+Smca7EUP34vYd1RI0RyXFpy7wlAw2Ew8Livwf1f+63pki1csTLPq8wPV2GTRxYtkUey6hQ==
+  dependencies:
+    "@hono/node-server" "^1.14.0"
+    "@hono/node-ws" "^1.1.1"
+    "@hono/swagger-ui" "^0.5.1"
+    "@hono/zod-openapi" "^0.19.6"
+    "@libsql/client" "^0.15.0"
+    "@modelcontextprotocol/sdk" "^1.10.1"
+    "@opentelemetry/api" "^1.9.0"
+    "@opentelemetry/sdk-trace-base" "^2.0.0"
+    "@opentelemetry/sdk-trace-node" "^2.0.0"
+    "@types/ws" "^8.18.1"
+    hono "^4.7.7"
+    npm-check-updates "^17.1.18"
+    uuid "^9.0.1"
+    ws "^8.18.1"
+    zod "3.24.2"
+    zod-from-json-schema "^0.0.5"
+
 "@voltagent/vercel-ai@^0.1.9":
   version "0.1.9"
   resolved "https://npm.corp.kuaishou.com/@voltagent/vercel-ai/-/vercel-ai-0.1.9.tgz#9833efee7a90db23f2edf3b0152776ee40ddc072"
@@ -2270,10 +2292,118 @@
     ai "^4.2.11"
     zod "3.24.2"
 
+"@voltagent/xsai@^0.2.0":
+  version "0.2.0"
+  resolved "https://npm.corp.kuaishou.com/@voltagent/xsai/-/xsai-0.2.0.tgz#615b004ba2f6134723c281057733526da3080124"
+  integrity sha512-fwFCAUT/x6Mi//IhX2XpUOjYqOddwz9qZBXqaAHtQi/5m0NKW3VwBoHZc8ARE+ju6kmbaHSc6IbUGege2awdAg==
+  dependencies:
+    "@voltagent/core" "^0.1.29"
+    xsai "0.2.0-beta.3"
+    zod "3.24.2"
+
 "@xmldom/xmldom@^0.8.8":
   version "0.8.10"
   resolved "https://npm.corp.kuaishou.com/@xmldom/xmldom/-/xmldom-0.8.10.tgz#a1337ca426aa61cef9fe15b5b28e340a72f6fa99"
   integrity sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==
+
+"@xsai/embed@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/embed/-/embed-0.2.2.tgz#e15a3c6df17db21c226540f21560ab14da98ca87"
+  integrity sha512-EMT+O+YBRxORGKkmDmF04vo7qo43CbCKOyUfiCF0gNG5Vf8yMLkofqavQW3Ub6U2LSN4XGHP7hjxWGV8MiP8Xw==
+  dependencies:
+    "@xsai/shared" ""
+
+"@xsai/generate-image@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/generate-image/-/generate-image-0.2.2.tgz#eed675415229ae8a651c08a22d54dfb3a07d1480"
+  integrity sha512-H4LVrlmlFY0KvLF3daTzcThTVwUyrC73Of7iFdWNdSYg3y4RgshDAYdTvIvXUjpxcOBJDuOnuQ+fo1fKXpPjBw==
+  dependencies:
+    "@xsai/shared" ""
+
+"@xsai/generate-object@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/generate-object/-/generate-object-0.2.2.tgz#d33490d886d8d60f17a0908a59389a52aacf3d93"
+  integrity sha512-PkdQXKMa9vktQkQ+IGmvj+df3HCiXFM8q5Y6EwUhCBjTE+iwnC8wnJTPK5Q4oxxZ/1461D0jE2tYOnDhomGwrA==
+  dependencies:
+    "@xsai/generate-text" ""
+    xsschema ""
+
+"@xsai/generate-speech@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/generate-speech/-/generate-speech-0.2.2.tgz#a73c86159e4015650ed7cd8c2feb60b6cadec56b"
+  integrity sha512-ZRIMBsiWLg6UqfM420I3qLEQ+VpOEo6vWsOhx6/k7+K+zhhY8TCgFIFP7X9Gx7REUykKpYN2ak9wdY3HF9/H9A==
+  dependencies:
+    "@xsai/shared" ""
+
+"@xsai/generate-text@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/generate-text/-/generate-text-0.2.2.tgz#f3279fabb57024a065355a338221a2b2609ab199"
+  integrity sha512-76MMlr8CXnriMh4n36NPo5nUMt8z1CZhCETo0/xm+Ge2fySCM1k2zKjhnR6IOtQtnFUVC/q0bnWyjcCiVANbEw==
+  dependencies:
+    "@xsai/shared" ""
+    "@xsai/shared-chat" ""
+
+"@xsai/generate-transcription@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/generate-transcription/-/generate-transcription-0.2.2.tgz#04b3395adfbfb1650f4e2c622a30add7e5a39679"
+  integrity sha512-c8UEXoMrlciQmy+CCWFTRD9XOOvxj33pB4GeTSzEgL6OCWNZs4EO2+S+k+39WlOuyRxcoxhq2rfKw2f1LleDug==
+  dependencies:
+    "@xsai/shared" ""
+
+"@xsai/model@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/model/-/model-0.2.2.tgz#86b766bd997cf073e3f3bdc2e3f331efaf3cc27d"
+  integrity sha512-Wvvx048ZILStGoDuejx5RtvdYZCpuJu5ht5kPmoUGrA8TBEC1IqMMBcFIoANhlDsir8GCw4uVhONSwZskvnycw==
+  dependencies:
+    "@xsai/shared" ""
+
+"@xsai/shared-chat@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/shared-chat/-/shared-chat-0.2.2.tgz#f0671c4867b3fc824cdc8e7c346d959255712127"
+  integrity sha512-0t4HwbK2jm5Lrixg9RnIsYTtAvlQNUdJXs2taW7PFaXfL5ktMy2IwZwW2nqK+Ig0RcLCMp3sScZujERHSDMtmg==
+  dependencies:
+    "@xsai/shared" ""
+
+"@xsai/shared@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/shared/-/shared-0.2.2.tgz#8b5bc0df0c76689ae27f2727e42d393a994e017d"
+  integrity sha512-bgalLd3samx36hDRRmu3M75LY5NfWwh3YRaMwY4Woy7X09JQx+vEqVpJcaIeqcmVqztm8NGYzj8hUru7lwPh0w==
+
+"@xsai/stream-object@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/stream-object/-/stream-object-0.2.2.tgz#0c19b99d604581cea96d67f0d8512431432b9b31"
+  integrity sha512-Rmdu8xwwwn8IDy5HqQt3kXmxfBuCI2PKavgOq/mp88sIsxZX+udzMbcEJZ/OAn8aIynI7gJJIT3cp6XkjbbnNw==
+  dependencies:
+    "@xsai/stream-text" ""
+    xsschema ""
+
+"@xsai/stream-text@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/stream-text/-/stream-text-0.2.2.tgz#0d021d2e0b99092ac016b810bf659f25f373c96d"
+  integrity sha512-GTVGuKEpYBOglPQ7cjO18/v8jiZxY/lejXMt+KsZqyMQo/WmH6gUkYkRME/cTyxlQEUiF0L/0CqRjQvtaDlB+Q==
+  dependencies:
+    "@xsai/shared-chat" ""
+
+"@xsai/tool@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/tool/-/tool-0.2.2.tgz#dc1a8754daba5c4c94767f6b6ebb651d5d4a2863"
+  integrity sha512-oNr5BtQqn4RDWM06grFnraPSi5TY4UzBxWc0Rh1skc+tNtVob7g5QyeBnTKzjH8MeqQEU6XV2qL5copLCS4lQA==
+  dependencies:
+    "@xsai/shared" ""
+    "@xsai/shared-chat" ""
+    xsschema ""
+
+"@xsai/utils-chat@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/utils-chat/-/utils-chat-0.2.2.tgz#299978d78d90f326cd90854ba9531d73714a4c42"
+  integrity sha512-p0Mj/UGXrphTkxFJ/43t5GA4pGwrICm52JIG+HCB3MSAlDgRAWFfaHbsjVl3rdgdznE7mUyIGJEJ+GOLUoYEKw==
+  dependencies:
+    "@xsai/shared-chat" ""
+
+"@xsai/utils-stream@":
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/@xsai/utils-stream/-/utils-stream-0.2.2.tgz#2ed1bc94cd535827d33584e3cc39e1e51bd6170f"
+  integrity sha512-YHAQsyDUAS3eVcreJGld5UmFafaYs7vbqTsqTDE9iHPRMuXgnAFaTcKTeXnzKP2bI2nm/tz0g1l3UkP21Da2EA==
 
 abbrev@^1.0.0:
   version "1.1.1"
@@ -9549,6 +9679,31 @@ xmlbuilder@>=11.0.1, xmlbuilder@^15.1.1:
   resolved "https://npm.corp.kuaishou.com/xmlbuilder/-/xmlbuilder-15.1.1.tgz#9dcdce49eea66d8d10b42cae94a79c3c8d0c2ec5"
   integrity sha512-yMqGBqtXyeN1e3TGYvgNgDVZ3j84W4cwkOXQswghol6APgZWaff9lnbvN7MHYJOiXsvGPXtjTYJEiC9J2wv9Eg==
 
+xsai@0.2.0-beta.3:
+  version "0.2.0-beta.3"
+  resolved "https://npm.corp.kuaishou.com/xsai/-/xsai-0.2.0-beta.3.tgz#042abefa70d14b06605ab11ed0601b471f860507"
+  integrity sha512-tuDrdLV4wqkZ77EabA5nJ7Pv8Jye1Layq2QsuJAO76gcLqh2uZBx0pwr9Kdxm5DPPHorxjcckZK89qM4CwnRDw==
+  dependencies:
+    "@xsai/embed" ""
+    "@xsai/generate-image" ""
+    "@xsai/generate-object" ""
+    "@xsai/generate-speech" ""
+    "@xsai/generate-text" ""
+    "@xsai/generate-transcription" ""
+    "@xsai/model" ""
+    "@xsai/shared" ""
+    "@xsai/shared-chat" ""
+    "@xsai/stream-object" ""
+    "@xsai/stream-text" ""
+    "@xsai/tool" ""
+    "@xsai/utils-chat" ""
+    "@xsai/utils-stream" ""
+
+xsschema@:
+  version "0.2.2"
+  resolved "https://npm.corp.kuaishou.com/xsschema/-/xsschema-0.2.2.tgz#cbe3e6b3941812ccc1c8ae20daf37c858f2132df"
+  integrity sha512-lRKF/5sqN+Yv2v8UdzjddrfeM5UAOR98tIgFkwXODxMwco4ImCmM1JBhfWaDukPeWsU1eHmOta8AsNAXiJZ1Cw==
+
 xtend@^4.0.0:
   version "4.0.2"
   resolved "https://npm.corp.kuaishou.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
@@ -9605,6 +9760,13 @@ yocto-queue@^0.1.0:
   resolved "https://npm.corp.kuaishou.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
+zod-from-json-schema@^0.0.5:
+  version "0.0.5"
+  resolved "https://npm.corp.kuaishou.com/zod-from-json-schema/-/zod-from-json-schema-0.0.5.tgz#b62b87da65b3c13a78913aa3643761d423d5487e"
+  integrity sha512-zYEoo86M1qpA1Pq6329oSyHLS785z/mTwfr9V1Xf/ZLhuuBGaMlDGu/pDVGVUe4H4oa1EFgWZT53DP0U3oT9CQ==
+  dependencies:
+    zod "^3.24.2"
+
 zod-to-json-schema@^3.24.1:
   version "3.24.5"
   resolved "https://npm.corp.kuaishou.com/zod-to-json-schema/-/zod-to-json-schema-3.24.5.tgz#d1095440b147fb7c2093812a53c54df8d5df50a3"
@@ -9619,6 +9781,11 @@ zod@^3.23.8, zod@^3.24.4, zod@^3.25.41:
   version "3.25.41"
   resolved "https://npm.corp.kuaishou.com/zod/-/zod-3.25.41.tgz#53dbe51e5f69fb521dd7ccbfbf3c829ddad22962"
   integrity sha512-8+sDJTGtCYIDBhdqDygp0ffj8kzziRKqAJPhpYObbElJ+3TRe/mnlnwH+/OMa3kKhueS4Drm5UMW00/u1p07zA==
+
+zod@^3.24.2:
+  version "3.25.56"
+  resolved "https://npm.corp.kuaishou.com/zod/-/zod-3.25.56.tgz#4cff0340b7cd3778314dac1e74d6a663ffeef914"
+  integrity sha512-rd6eEF3BTNvQnR2e2wwolfTmUTnp70aUTqr0oaGbHifzC3BKJsoV+Gat8vxUMR1hwOKBs6El+qWehrHbCpW6SQ==
 
 zustand@^5.0.4:
   version "5.0.5"

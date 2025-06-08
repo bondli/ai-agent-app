@@ -2,11 +2,11 @@ import { Sequelize } from 'sequelize';
 import logger from 'electron-log';
 
 let DB_CONFIG = {
-  host: process.env.DB_HOST || 'sh-cdb-rpcxf0dm.sql.tencentcdb.com',
-  port: 26884,
-  username: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'cx0917CXC',
-  database: process.env.DB_NAME || 'notebook',
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT || '3306'),
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 };
 
 if (process.env.NODE_ENV === 'development') {
@@ -18,8 +18,6 @@ if (process.env.NODE_ENV === 'development') {
     database: 'notebook',
   };
 }
-
-logger.info('Database Config:', DB_CONFIG);
 
 // 使用到的是sequelize，文档：
 // https://github.com/demopark/sequelize-docs-Zh-CN/blob/v6/core-concepts/model-querying-basics.md

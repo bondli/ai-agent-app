@@ -77,7 +77,7 @@ const Copilot = () => {
         conversationId,
         contextLimit: 10,
         temperature: 0.7,
-        maxTokens: 100,
+        maxTokens: 10000,
       },
     });
 

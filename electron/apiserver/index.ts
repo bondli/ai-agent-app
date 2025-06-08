@@ -28,7 +28,7 @@ app.all('*', (req, res, next) => {
     
     // 启动服务器
     app.listen(9587, () => {
-      logger.info('Api Server is running on port 9587');
+      logger.info('API Server is running on port 9587');
       if (typeof process.send === 'function') {
         process.send('API Server Ready');
       }

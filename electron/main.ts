@@ -93,6 +93,8 @@ const startApiServer = () => {
   apiServerChild.on('message', (data) => {
     logger.info('API Server stdout: ' , data);
     apiServerStatus = 'success';
+    // API Sever起来后再去启动AI Agent服务器
+    startAiAgentServer();
   });
 
   apiServerChild.on('exit', (code, signal) => {
@@ -103,7 +105,6 @@ const startApiServer = () => {
   apiServerChild.unref();
 };
 
-startAiAgentServer();
 startApiServer();
 
 //on parent process exit, terminate child process too.
@@ -141,7 +142,7 @@ const createWindow = () => {
       mainWindow.setMenuBarVisibility(false); // 设置菜单栏不可见
       mainWindow.menuBarVisible = false;
     }
-    logger.info('main window has be showed');
+    logger.info('main window is showed');
   };
 
   // 服务起来之后再打开界面，否则出现加载不到数据，延迟100ms来检查
@@ -152,7 +153,8 @@ const createWindow = () => {
     let timer = 0;
     const t = setInterval(() => {
       timer ++;
-      if (aiagentServerStatus === 'success' && apiServerStatus === 'success' || timer >= 50) { // 服务起来了，或者超过5s还没有起来，就不管了，结束轮询
+      // 5s之后服务还没有起来了，结束轮询，前台报错提示就好
+      if (aiagentServerStatus === 'success' && apiServerStatus === 'success' || timer >= 50) {
         openWin();
         timer = 0;
         clearInterval(t);

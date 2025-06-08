@@ -28,7 +28,7 @@ notification.config({
   rtl: false,
 });
 
-
+// 以下配置是开发环境使用stagewise，便于cursor快速调整UI
 // import { initToolbar, type ToolbarConfig } from '@stagewise/toolbar';
 
 // const stagewiseConfig: ToolbarConfig = {

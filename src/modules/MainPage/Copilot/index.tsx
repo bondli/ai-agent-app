@@ -15,11 +15,6 @@ import { MainContext } from '@common/context';
 
 import style from './index.module.less';
 
-type BubbleDataType = {
-  role: string;
-  content: string;
-};
-
 type Message = {
   role: string;
   content: string;
@@ -28,16 +23,7 @@ type Message = {
 
 const AGENT_PLACEHOLDER = 'Generating content, please wait...';
 
-function generateUUID() {
-  // 简单 uuid 生成
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
-
-const Copilot = () => {
+const Copilot = ({ sessionId }: { sessionId: string }) => {
   const { message } = App.useApp();
   const { userInfo } = useContext(MainContext);
 
@@ -46,7 +32,7 @@ const Copilot = () => {
   const [loading, setLoading] = useState(false);
 
   const [inputValue, setInputValue] = useState('');
-  const [conversationId] = useState(() => generateUUID());
+  const [conversationId, setConversationId] = useState(sessionId);
 
   // ==================== Event ====================
   const handleUserSubmit = async (val: string) => {
@@ -87,6 +73,7 @@ const Copilot = () => {
         headers: {
           'accept': 'text/event-stream',
           'Content-Type': 'application/json',
+          'X-User-Id': `${userInfo?.id}`,
         },
         body,
         signal: controller.signal,
@@ -153,13 +140,6 @@ const Copilot = () => {
     }
   };
 
-  // ==================== Nodes ====================
-  const chatHeader = (
-    <div className={style.chatHeader}>
-      <div className={style.headerTitle}>AI Copilot</div>
-    </div>
-  );
-
   const chatList = (
     <div className={style.chatList}>
       {messages?.length ? (
@@ -195,7 +175,7 @@ const Copilot = () => {
           <Welcome
             variant="borderless"
             title="Hello, I'm a AI Agent"
-            description="I'm a AI Agent, I can help you to answer questions and solve problems."
+            description="I can help you to answer questions and solve problems."
             className={style.chatWelcome}
           />
         </>
@@ -204,8 +184,7 @@ const Copilot = () => {
   );
 
   const chatSender = (
-    <div className={style.chatSend}>
-
+    <div>
       {/** 输入框 */}
       <Suggestion items={[]} onSelect={(itemVal) => setInputValue(`[${itemVal}]:`)}>
         {({ onTrigger, onKeyDown }) => (
@@ -241,10 +220,14 @@ const Copilot = () => {
     </div>
   );
 
+  useEffect(() => {
+    setMessages([]);
+    setInputValue('');
+    setConversationId(sessionId);
+  }, [sessionId]);
+
   return (
     <div className={style.copilotChat}>
-      {/** 对话区 - header */}
-      {chatHeader}
 
       {/** 对话区 - 消息列表 */}
       {chatList}

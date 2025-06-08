@@ -37,7 +37,15 @@ export const userLog = (msg: any, msgData?: any) => {
   
   let outMsg = typeof msg === 'string' ? msg : JSON.stringify(msg);
   if (msgData) {
-    outMsg += ` ${typeof msgData === 'string' ? msgData : JSON.stringify(msgData)}`;
+    if (typeof msgData === 'string') {
+      outMsg += ` ${msgData}`;
+    } else {
+      try {
+        outMsg += ` ${JSON.stringify(msgData)}`;
+      } catch (err) {
+        outMsg += ` [Unserializable object: ${Object.prototype.toString.call(msgData)}]`;
+      }
+    }
   }
   ipcRenderer?.userLog?.(outMsg);
 }

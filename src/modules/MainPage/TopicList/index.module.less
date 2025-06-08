@@ -1,0 +1,80 @@
+.container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+.header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  .title {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    .searchContainer {
+      display: flex;
+      align-items: center;
+      .searchResult {
+        font-size: 12px;
+      }
+    }
+  }
+  .titleText {
+    padding-right: 16px;
+  }
+}
+.actionMenu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.listContainer {
+  width: 100%;
+  height: calc(100vh - 144px);
+  overflow-y: scroll;
+  scrollbar-width: none;
+  padding: 16px 16px 0 16px;
+  box-sizing: border-box;
+}
+.cardContainer {
+  width: 100%;
+  margin-bottom: 16px;
+  .cardTitleLeft {
+    display: flex;
+    flex-direction: column;
+    .time {
+      margin-top: 4px;
+      padding-left: 14px;
+      color: #71717a;
+      font-size: 12px;
+    }
+  }
+  .cardExtra {
+    color: #71717a;
+    font-size: 12px;
+  }
+  .desc {
+    color: #71717a;
+    font-size: 12px;
+    display: inline;
+    word-break: break-all;
+    overflow-wrap: break-word;
+  }
+  .tagsContainer {
+    width: 100%;
+    height: 24px;
+  }
+  .deadline {
+    color: #71717a;
+    font-size: 12px;
+  }
+}

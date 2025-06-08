@@ -1,7 +1,9 @@
 import React, { memo, useState, useContext } from 'react';
-import { App, Layout, theme } from 'antd';
+import { App, Layout, Row, Col, FloatButton, Drawer, Button, Tooltip } from 'antd';
+import { CommentOutlined, PlusOutlined } from '@ant-design/icons';
 
 import { MainContext } from '@common/context';
+import { SPLIT_LINE } from '@common/constant';
 import { deleteStore } from '@common/electron';
 
 import Logo from '@components/Logo';
@@ -10,14 +12,28 @@ import User from '@components/User';
 import style from './index.module.less';
 
 import Copilot from './Copilot';
+import Category from './Category';
+import TopicList from './TopicList';
+import TopicDetail from './TopicDetail';
 
-const { Header, Content } = Layout;
+const { Header } = Layout;
+
+// 生成 uuid作为sessionId
+const generateUUID = () => {
+  // 简单 uuid 生成
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
 
 const MainPage: React.FC = () => {
   const { message } = App.useApp();
-  const { userInfo, setUserInfo } = useContext(MainContext);
+  const { userInfo, setUserInfo, selectedTopic } = useContext(MainContext);
 
-  const { token: { colorBgContainer } } = theme.useToken();
+  const [showCopilot, setShowCopilot] = useState(false);
+  const [sessionId, setSessionId] = useState<string>(generateUUID());
 
   const onLogout = () => {
     deleteStore('loginData');
@@ -25,35 +41,73 @@ const MainPage: React.FC = () => {
     setUserInfo(null);
   };
 
+  // 新会话
+  const handleNewChat = () => {
+    setSessionId(generateUUID());
+  };
+
   return (
     <Layout className={style.container}>
-      <Header
-      className={style.header}
-        style={{
-          background: colorBgContainer,
-        }}
-      >
+
+      <Header className={style.header}>
         <Logo mode={'dark'} title={'AI Agent'} />
 
         <div className={style.user}>
           <User info={userInfo} onLogout={onLogout} />
         </div>
       </Header>
-      <Content className={style.content}>
-        <div className={style.copilotWrapper}>
-          {/** 左侧工作区 */}
-          <div className={style.workarea}>
-            <div className={style.workareaBody}>
-              <div className={style.bodyContent}>
-                hello world
-              </div>
-            </div>
-          </div>
 
-          {/** 右侧对话区 */}
-          <Copilot />
-        </div>
-      </Content>
+      <Row className={style.content}>
+        <Col flex="208px" className={style.left} style={{ borderRight: SPLIT_LINE }}>
+          <Category />
+        </Col>
+        <Col flex="auto" className={style.right}>
+          <table className={style.mainTable}>
+            <tbody>
+              <tr>
+                <td style={{ width: selectedTopic && selectedTopic.id ? '50%' : '100%' }}>
+                  <TopicList />
+                </td>
+                {
+                  selectedTopic && selectedTopic.id ? (
+                    <td style={{ width: '50%', borderLeft: SPLIT_LINE }}>
+                      <TopicDetail />
+                    </td>
+                  ) : null
+                }
+              </tr>
+            </tbody>
+          </table>
+        </Col>
+      </Row>
+
+      <FloatButton
+        icon={<CommentOutlined />}
+        type="primary"
+        style={{ insetInlineEnd: 24 }}
+        onClick={() => {
+          setShowCopilot(!showCopilot);
+        }}
+      />
+
+      {/* AI聊天框 */}
+      <Drawer
+        title={`AI Copilot`}
+        width={500}
+        open={showCopilot}
+        onClose={() => setShowCopilot(false)}
+        extra={
+          <Tooltip title="新建会话">
+            <Button
+              type="text"
+              icon={<PlusOutlined />}
+              onClick={handleNewChat}
+            />
+          </Tooltip>
+        }
+      >
+        <Copilot sessionId={sessionId} />
+      </Drawer>
     </Layout>
   );
 };

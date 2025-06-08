@@ -17,8 +17,8 @@ const Topic = sequelize.define('Topic', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  noteId: {
-    comment: '笔记本id',
+  cateId: {
+    comment: '分类id',
     type: DataTypes.INTEGER,
     allowNull: false,
   },

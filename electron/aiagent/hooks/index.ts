@@ -18,13 +18,16 @@ const myAgentHooks = createHooks({
     const { agent, context } = args;
     logger.info(`[Hook] Agent ${agent.name} starting interaction at ${new Date().toISOString()}`);
     logger.info(`[Hook] Operation ID: ${context.operationId}`);
+    context.userContext.set('requestId', `req-${Date.now()}`);
   },
 
   /**
    * Called after the agent finishes processing a request, successfully or with an error.
    */
   onEnd: async (args: OnEndHookArgs) => {
-    const { agent, output, error } = args;
+    const { agent, output, error, context } = args;
+    const requestId = context.userContext.get('requestId'); // Get data from context
+    logger.info(`[Hook] Agent ${agent.name} Operation finished. RequestID: ${requestId}`);
     if (error) {
       logger.error(`[Hook] Agent ${agent.name} finished with error:`, error.message);
       // Log detailed error info

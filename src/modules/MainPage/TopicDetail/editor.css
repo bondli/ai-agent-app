@@ -1,0 +1,40 @@
+.ql-toolbar.ql-snow {
+  border: 0 !important;
+  border-bottom: 1px solid rgb(228, 228, 231) !important;
+}
+.ql-container.ql-snow {
+  border: 0 !important;
+  height: calc(100vh - 142px);
+  overflow-y: scroll;
+}
+.ql-editor.ql-blank {
+  line-height: 28px !important;
+}
+.ql-editor p {
+  word-break: break-all;
+  overflow-wrap: break-word;
+  line-height: 28px;
+}
+.ql-editor ol,
+.ql-editor ul {
+  padding-left: 0px !important;
+}
+.ql-editor ol li:not(.ql-direction-rtl), .ql-editor ul li:not(.ql-direction-rtl) {
+  /*padding-left: 16px !important;*/
+  line-height: 28px;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.ql-editor li.ql-indent-1:not(.ql-direction-rtl) {
+  padding-left: 3em !important;
+}
+.ql-editor .ql-indent-2:not(.ql-direction-rtl) {
+  padding-left: 4.5em !important;
+}
+.ql-editor li.ql-indent-3:not(.ql-direction-rtl) {
+  padding-left: 6em !important;
+}
+.ql-editor li.ql-indent-4:not(.ql-direction-rtl) {
+  padding-left: 7.5em !important;
+}

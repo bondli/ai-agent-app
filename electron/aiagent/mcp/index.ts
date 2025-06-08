@@ -11,7 +11,6 @@ const mcpConfig = new MCPConfiguration({
       requestInit: {
         headers: {
           'X-From': 'AI-Agent-Client',
-          'X-User-Id': '1',
         },
       },
     },

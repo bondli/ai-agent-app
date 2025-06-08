@@ -4,7 +4,7 @@ import { VoltAgent, Agent } from '@voltagent/core';
 import { XSAIProvider } from '@voltagent/xsai';
 
 import mcpConfig from './mcp';
-import { calculatorTool, weatherTool } from './tools';
+import { calculatorTool, weatherTool, loggerTool } from './tools';
 import KnowledgeBaseRetriever from './rag';
 import myAgentHooks from './hooks';
 
@@ -24,7 +24,7 @@ const localProvider = new XSAIProvider({
     llm: localProvider,
     model: process.env.MODEL_NAME || 'qwen3:0.6b', // Model identifier specific to this provider
     hooks: myAgentHooks,
-    tools: [calculatorTool, weatherTool, ...allTools],
+    tools: [calculatorTool, weatherTool, loggerTool, ...allTools],
     retriever: new KnowledgeBaseRetriever(),
   });
 

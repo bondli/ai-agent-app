@@ -1,4 +1,4 @@
-import { createTool } from '@voltagent/core';
+import { createTool, type ToolExecutionContext } from '@voltagent/core';
 import logger from 'electron-log';
 import { z } from 'zod';
 
@@ -43,7 +43,20 @@ export const weatherTool = createTool({
   },
 } as any);
 
+export const loggerTool = createTool({
+  name: 'context_aware_logger',
+  description: 'Logs a message using the request ID from context.',
+  parameters: z.object({ message: z.string() }),
+  execute: async (params: { message: string }, options?: ToolExecutionContext) => {
+    const requestId = options?.operationContext?.userContext?.get('requestId') || 'unknown';
+    const logMessage = `[ReqID: ${requestId}] Tool Log: ${params.message}`;
+    console.log(logMessage);
+    return `Logged: ${params.message}`;
+  },
+} as any);
+
 export default {
   calculatorTool,
   weatherTool,
+  loggerTool,
 };

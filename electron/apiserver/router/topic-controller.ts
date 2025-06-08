@@ -7,16 +7,16 @@ import { Cate } from '../model/cate';
 export const createTopic = async (req: Request, res: Response) => {
   const userId = req.headers['x-user-id'];
   try {
-    const { title, desc, noteId, tags, deadline, priority } = req.body;
-    const result = await Topic.create({ title, desc, noteId, tags, deadline, priority, userId });
+    const { title, desc, cateId, tags, deadline, priority } = req.body;
+    const result = await Topic.create({ title, desc, cateId, tags, deadline, priority, userId });
     if (result) {
       // 给对应的分类中增加代办记录数
-      const CateResult = await Cate.findByPk(Number(noteId));
+      const CateResult = await Cate.findByPk(Number(cateId));
       CateResult && CateResult.update({
         counts: Sequelize.literal('counts + 1'),
       }, {
         where: {
-          id: noteId,
+          id: Number(cateId),
         },
       });
     }
@@ -47,20 +47,20 @@ export const getTopicInfo = async (req: Request, res: Response) => {
 export const getTopics = async (req: Request, res: Response) => {
   const userId = req.headers['x-user-id'];
   try {
-    const { noteId } = req.query;
+    const { cateId } = req.query;
     const where = {
       userId,
     };
     // 所有代办
-    if (noteId === 'all') {
+    if (cateId === 'all') {
       where['status'] = 'undo';
     }
     // 所有已完成
-    else if (noteId === 'done') {
+    else if (cateId === 'done') {
       where['status'] = 'done';
     }
     // 今日到期
-    else if (noteId === 'today') {
+    else if (cateId === 'today') {
       const today = new Date();
       const todayAtMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
@@ -71,13 +71,13 @@ export const getTopics = async (req: Request, res: Response) => {
       where['status'] = 'undo';
     }
     // 已删除
-    else if (noteId === 'trash') {
+    else if (cateId === 'trash') {
       where['status'] = 'deleted';
     }
     // 正常查笔记本下的
     else {
       where['status'] = 'undo';
-      where['noteId'] = noteId;
+      where['cateId'] = cateId;
     }
     const { count, rows } = await Topic.findAndCountAll({
       where,
@@ -88,7 +88,7 @@ export const getTopics = async (req: Request, res: Response) => {
       data: rows || [],
     });
   } catch (error) {
-    console.error('Error getting topicList by noteId:', error);
+    console.error('Error getting topicList by cateId:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -97,10 +97,10 @@ export const getTopics = async (req: Request, res: Response) => {
 export const updateTopic = async (req: Request, res: Response) => {
   try {
     const { id, op } = req.query;
-    const { title, desc, noteId, status, tags, priority, deadline } = req.body;
+    const { title, desc, cateId, status, tags, priority, deadline } = req.body;
     const result = await Topic.findByPk(Number(id));
     if (result) {
-      await result.update({ title, desc, noteId, status, tags, priority, deadline });
+      await result.update({ title, desc, cateId, status, tags, priority, deadline });
       // 针对不同的操作类型，需要更新笔记本中的数量字段
       if (op === 'done' || op === 'delete' || op === 'restore' || op === 'undo') {
         const operatorTopic = result.toJSON();
@@ -110,12 +110,12 @@ export const updateTopic = async (req: Request, res: Response) => {
         } else if (op === 'done' || op === 'delete') {
           updateNumCommand = 'counts - 1';
         }
-        const CateResult = await Cate.findByPk(Number(operatorTopic.noteId));
+        const CateResult = await Cate.findByPk(Number(operatorTopic.cateId));
         CateResult && CateResult.update({
           counts: Sequelize.literal(updateNumCommand),
         }, {
           where: {
-            id: operatorTopic.noteId,
+            id: operatorTopic.cateId,
           },
         });
       }
@@ -133,27 +133,27 @@ export const updateTopic = async (req: Request, res: Response) => {
 export const moveTopic = async (req: Request, res: Response) => {
   try {
     const { id, status } = req.query;
-    const { oldNoteId, newNoteId } = req.body;
+    const { oldCateId, newCateId } = req.body;
     const result = await Topic.findByPk(Number(id));
     if (result) {
-      await result.update({ noteId: Number(newNoteId) });
+      await result.update({ cateId: Number(newCateId) });
       if (status === 'undo') {
         // 只针对当前的代办还没有完结的情况下
         // 给新的分类中增加代办记录数，给老的分类减少代办记录数
-        const newCateResult = await Cate.findByPk(Number(newNoteId));
+        const newCateResult = await Cate.findByPk(Number(newCateId));
         newCateResult && newCateResult.update({
           counts: Sequelize.literal('counts + 1'),
         }, {
           where: {
-            id: Number(newNoteId),
+            id: Number(newCateId),
           },
         });
-        const oldCateResult = await Cate.findByPk(Number(oldNoteId));
+        const oldCateResult = await Cate.findByPk(Number(oldCateId));
         oldCateResult && oldCateResult.update({
           counts: Sequelize.literal('counts - 1'),
         }, {
           where: {
-            id: Number(oldNoteId),
+            id: Number(oldCateId),
           },
         });
       }
@@ -218,7 +218,7 @@ export const getTopicCounts = async(req: Request, res: Response) => {
       deleted: deletedTopicCount || 0,
     });
   } catch (error) {
-    console.error('Error getting topicList by noteId:', error);
+    console.error('Error getting topicCounts:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -228,22 +228,22 @@ export const searchTopics = async (req: Request, res: Response) => {
   const userId = req.headers['x-user-id'];
 
   try {
-    const { noteId } = req.query;
+    const { cateId } = req.query;
     const { searchKey } = req.body;
 
     let status: string = 'undo';
     let deadline: any = null;
 
     // 所有代办
-    if (noteId === 'all') {
+    if (cateId === 'all') {
       status = 'undo';
     }
     // 所有已完成
-    else if (noteId === 'done') {
+    else if (cateId === 'done') {
       status = 'done';
     }
     // 今日到期
-    else if (noteId === 'today') {
+    else if (cateId === 'today') {
       const today = new Date();
       const todayAtMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
@@ -253,7 +253,7 @@ export const searchTopics = async (req: Request, res: Response) => {
       };
     }
     // 已删除
-    else if (noteId === 'trash') {
+    else if (cateId === 'trash') {
       status = 'deleted';
     }
 
@@ -302,7 +302,7 @@ export const searchTopics = async (req: Request, res: Response) => {
       data: rows || [],
     });
   } catch (error) {
-    console.error('Error search topicList by noteId:', error);
+    console.error('Error search topicList by cateId:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

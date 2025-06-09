@@ -1,15 +1,15 @@
 import { memo, useRef, useEffect, useState, useContext } from 'react';
-import { App, Space, Spin } from 'antd';
-import {
-  UserOutlined,
-} from '@ant-design/icons';
-
+import { App, Space, Spin, Typography } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import {
   Bubble,
+  BubbleProps,
   Sender,
   Suggestion,
   Welcome,
 } from '@ant-design/x';
+
+import markdownit from 'markdown-it';
 
 import { MainContext } from '@common/context';
 
@@ -22,6 +22,17 @@ type Message = {
 };
 
 const AGENT_PLACEHOLDER = 'Generating content, please wait...';
+
+const md = markdownit({ html: true, breaks: true });
+const renderMarkdown: BubbleProps['messageRender'] = (content) => {
+  console.log('content', content);
+  return (
+    <Typography>
+      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: used in demo */}
+      <div dangerouslySetInnerHTML={{ __html: md.render(content) }} />
+    </Typography>
+  );
+};
 
 const Copilot = ({ sessionId }: { sessionId: string }) => {
   const { message } = App.useApp();
@@ -150,7 +161,8 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
             content: i.content,
             role: i.role,
             loading: i.status === 'loading' ? true : false,
-            typing: i.status === 'loading' ? { step: 5, interval: 20 } : false,
+            typing: { step: 5, interval: 20 },
+            messageRender: renderMarkdown,
           }))}
           roles={{
             assistant: {

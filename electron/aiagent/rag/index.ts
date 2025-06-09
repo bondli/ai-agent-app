@@ -1,4 +1,5 @@
 import { BaseRetriever, type BaseMessage } from '@voltagent/core';
+import logger from 'electron-log';
 
 // --- Simple Knowledge Base Retriever ---
 class KnowledgeBaseRetriever extends BaseRetriever {
@@ -26,7 +27,7 @@ class KnowledgeBaseRetriever extends BaseRetriever {
   async retrieve(input: string | BaseMessage[]): Promise<string> {
     const query = typeof input === "string" ? input : (input[input.length - 1].content as string);
     const queryLower = query.toLowerCase();
-    console.log(`[KnowledgeBaseRetriever] Searching for context related to: "${query}"`);
+    logger.info(`[KnowledgeBaseRetriever] Searching for context related to: "${query}"`);
 
     // Simple includes check
     const relevantDocs = this.documents.filter((doc) =>
@@ -35,11 +36,11 @@ class KnowledgeBaseRetriever extends BaseRetriever {
 
     if (relevantDocs.length > 0) {
       const contextString = relevantDocs.map((doc) => `- ${doc.content}`).join("\n");
-      console.log(`[KnowledgeBaseRetriever] Found context:\n${contextString}`);
+      logger.info(`[KnowledgeBaseRetriever] Found context:\n${contextString}`);
       return `Relevant Information Found:\n${contextString}`;
     }
 
-    console.log("[KnowledgeBaseRetriever] No relevant context found.");
+    logger.info("[KnowledgeBaseRetriever] No relevant context found.");
     return "No relevant information found in the knowledge base.";
   }
 }

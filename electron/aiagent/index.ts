@@ -10,25 +10,26 @@ import myAgentHooks from './hooks';
 
 // 本地模型
 const localProvider = new XSAIProvider({
-  apiKey: process.env.MODEL_API_KEY || 'ollama', // Often not required or a placeholder for local models
-  baseURL: process.env.MODEL_BASE_URL, // Default Ollama endpoint
+  apiKey: process.env.MODEL_API_KEY || 'ollama',
+  baseURL: process.env.MODEL_BASE_URL,
 });
 
 (async () => {
   const allTools = await mcpConfig.getTools();
 
-  // Define a simple agent
+  // Agent实例
   const agent = new Agent({
     name: 'my-agent',
     instructions: '你是一个高效的助手，总是用中文做回答，只需直接给出简洁、明确的最终答案，不要输出任何推理过程、思维链、分析过程或解释。',
     llm: localProvider,
-    model: process.env.MODEL_NAME || 'qwen3:0.6b', // Model identifier specific to this provider
+    model: process.env.MODEL_NAME || 'qwen3:0.6b',
+    markdown: true,
     hooks: myAgentHooks,
     tools: [calculatorTool, weatherTool, loggerTool, ...allTools],
     retriever: new KnowledgeBaseRetriever(),
   });
 
-  // Initialize VoltAgent with your agent(s)
+  // 初始化
   new VoltAgent({
     agents: {
       agent,
@@ -37,8 +38,6 @@ const localProvider = new XSAIProvider({
 
   if (typeof process.send === 'function') {
     logger.info('AI Agent Server is running on port 3141');
-    if (typeof process.send === 'function') {
-      process.send('AI Agent Server Ready');
-    }
+    process.send('AI Agent Server Ready');
   }
 })();

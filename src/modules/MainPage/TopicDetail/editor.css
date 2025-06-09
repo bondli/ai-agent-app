@@ -4,8 +4,14 @@
 }
 .ql-container.ql-snow {
   border: 0 !important;
-  height: calc(100vh - 142px);
+  height: calc(100vh - 240px);
   overflow-y: scroll;
+  /* 隐藏滚动条 - 兼容主流浏览器 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.ql-container.ql-snow::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 .ql-editor.ql-blank {
   line-height: 28px !important;

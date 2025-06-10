@@ -108,6 +108,9 @@
     "files": [
       "dist/**/*"
     ],
+    "extraFiles": [
+      ".env"
+    ],
     "directories": {
       "output": "release/${version}"
     },

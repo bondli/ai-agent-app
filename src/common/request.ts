@@ -1,11 +1,12 @@
 import { notification } from 'antd';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { userLog, getStore } from '@common/electron';
 
-export const baseURL = 'http://localhost:9587/';
+import { userLog, getStore } from '@common/electron';
+import { API_BASE_URL } from '@common/constant';
+
 // 创建axios实例
 const service: AxiosInstance = axios.create({
-  baseURL, // api的base_url
+  baseURL: API_BASE_URL, // api的base_url
   timeout: 10000 // 请求超时时间
 });
 

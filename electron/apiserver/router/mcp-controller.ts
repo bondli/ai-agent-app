@@ -11,8 +11,8 @@ const transports: { [sessionId: string]: SSEServerTransport } = {};
  * 供agent来测试MCP服务
  */
 export const mcpServer = async (req: Request, res: Response) => {
-  logger.info('MCP server ready');
-  const transport = new SSEServerTransport('/mcpServer', res);
+  logger.info('[mcp-server] MCP server ready');
+  const transport = new SSEServerTransport('/mcpMessage', res);
   transports[transport.sessionId] = transport;
   
   res.on('close', () => {
@@ -25,8 +25,8 @@ export const mcpServer = async (req: Request, res: Response) => {
 /**
  * 供agent来调用MCP服务
  */
-export const mcpServerPost = async (req: Request, res: Response) => {
-  logger.info('MCP server post');
+export const mcpMessage = async (req: Request, res: Response) => {
+  logger.info('[mcp-server] MCP server message');
   const sessionId = req.query.sessionId as string;
   const transport = transports[sessionId];
   if (transport) {

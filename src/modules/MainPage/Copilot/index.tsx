@@ -12,6 +12,7 @@ import {
 import markdownit from 'markdown-it';
 
 import { MainContext } from '@common/context';
+import { AGENT_BASE_URL } from '@common/constant';
 
 import style from './index.module.less';
 
@@ -29,7 +30,7 @@ const renderMarkdown: BubbleProps['messageRender'] = (content) => {
   return (
     <Typography>
       {/* biome-ignore lint/security/noDangerouslySetInnerHtml: used in demo */}
-      <div dangerouslySetInnerHTML={{ __html: md.render(content) }} />
+      <div dangerouslySetInnerHTML={{ __html: md.render(content) }} className={style.markdown} />
     </Typography>
   );
 };
@@ -66,7 +67,7 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
     const controller = new AbortController();
     abortController.current = controller;
     const agentId = 'my-agent'; // 可根据实际情况动态传递
-    const url = `http://localhost:3141/agents/${agentId}/stream`;
+    const url = `${AGENT_BASE_URL}/${agentId}/stream`;
     const body = JSON.stringify({
       input: val,
       options: {

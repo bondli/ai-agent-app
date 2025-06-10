@@ -1,5 +1,5 @@
 import React, { memo, useContext, useState, useEffect, useRef } from 'react';
-import { SearchOutlined, EllipsisOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons';
+import { SearchOutlined, EllipsisOutlined, FormOutlined, DeleteOutlined, DragOutlined } from '@ant-design/icons';
 import { Button, Popover, Modal, Input, App } from 'antd';
 
 import { HEADER_HEIGHT, SPLIT_LINE, DEFAULT_CATE } from '@/common/constant';
@@ -18,8 +18,13 @@ const Header: React.FC<HeaderProps> = (props) => {
   const { currentCate, setCurrentCate, selectedTopic, getCateList, setTopicList } = useContext(MainContext);
 
   const [showActionModal, setShowActionModal] = useState(false);
+
   const [showEditPanel, setShowEditPanel] = useState(false);
   const [tempCateName, setTempCateName] = useState('');
+
+  const [showOrderPanel, setShowOrderPanel] = useState(false);
+  const [tempCateOrder, setTempCateOrder] = useState(0);
+
   const [showSearchPanel, setShowSearchPanel] = useState(false);
   const [searchKey, setSearchKey] = useState('');
   const inputRef = useRef(null);
@@ -35,7 +40,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   
   const createTopic = () => {
     request.post('/topic/add', {
-      title: '这是一个新的代办事项',
+      title: '这是一个新的代办事项/笔记/文章',
       desc: '',
       cateId: currentCate.id,
     }).then((res) => {
@@ -84,6 +89,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     }
     request
       .post(`/cate/update?id=${currentCate?.id}`, {
+        ...currentCate,
         name: tempCateName,
       }).then(() => {
         setTempCateName('');
@@ -108,7 +114,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     setShowActionModal(false);
     modal.confirm({
       title: '确认删除吗？',
-      content: '删除后将无法恢复，该分类下的代办事项全部清空',
+      content: '删除后将无法恢复，该分类下的笔记全部清空',
       onOk() {
         // 删除
         request
@@ -128,6 +134,45 @@ const Header: React.FC<HeaderProps> = (props) => {
     });
   };
 
+  // 调整分类排序
+  const handleOrder = () => {
+    setShowActionModal(false);
+    setShowOrderPanel(true);
+    setTempCateOrder(currentCate?.orders || 0);
+  };
+
+  // 修改分类排序
+  const handleCateOrderChange = (e) => {
+    setTempCateOrder(e.target.value);
+  };
+
+  // 保存分类排序
+  const handleSaveOrder = () => {
+    userLog('Submit Save Order cate, new cate order: ', tempCateOrder);
+    if (!tempCateOrder) {
+      message.error('请输入笔记分类排序');
+      return;
+    }
+    request
+      .post(`/cate/update?id=${currentCate?.id}`, {
+        ...currentCate,
+        orders: tempCateOrder,
+      }).then(() => {
+        setShowOrderPanel(false);
+        setCurrentCate({ ...currentCate, orders: tempCateOrder });
+        getCateList();
+        message.success('排序成功');
+      }).catch((err) => {
+        userLog('Logic Save Order cate failed: ', err);
+        message.error(`排序失败：${err.message}`);
+      });
+  };
+
+  // 取消修改分类排序
+  const handleCancelOrder = () => {
+    setShowOrderPanel(false);
+  };
+
   const handleMenuOpenChange = (open: boolean) => {
     setShowActionModal(open);
   };
@@ -138,6 +183,7 @@ const Header: React.FC<HeaderProps> = (props) => {
       <div className={style.actionMenu}>
         <Button icon={<FormOutlined />} type="text" onClick={handleEdit}>编辑</Button>
         <Button icon={<DeleteOutlined />} type="text" onClick={handleDelete}>删除</Button>
+        <Button icon={<DragOutlined />} type="text" onClick={handleOrder}>排序</Button>
       </div>
     );
   };
@@ -206,7 +252,7 @@ const Header: React.FC<HeaderProps> = (props) => {
         }
       </div>
       <div>
-        <Button type="primary" size="small" onClick={handleNewTopic}>创建代办</Button>
+        <Button type="primary" size="small" onClick={handleNewTopic}>创建笔记</Button>
       </div>
       <Modal
         title="修改笔记分类"
@@ -218,7 +264,7 @@ const Header: React.FC<HeaderProps> = (props) => {
       </Modal>
 
       <Modal
-        title="搜索代办"
+        title="搜索笔记"
         open={showSearchPanel}
         onOk={goSearch}
         onCancel={handleHideSearch}
@@ -230,6 +276,15 @@ const Header: React.FC<HeaderProps> = (props) => {
           value={searchKey}
           ref={inputSearchRef}
         />
+      </Modal>
+
+      <Modal
+        title="调整分类排序"
+        open={showOrderPanel}
+        onOk={handleSaveOrder}
+        onCancel={handleCancelOrder}
+      >
+        <Input value={tempCateOrder} onChange={handleCateOrderChange} maxLength={2} allowClear />
       </Modal>
     </div>
   );

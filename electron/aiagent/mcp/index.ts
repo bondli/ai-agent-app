@@ -17,7 +17,7 @@ const mcpConfig = new MCPConfiguration({
     'fetch-mcp': {
       type: 'stdio',
       command: 'npx',
-      args: ['-y', 'fetch-content-mcp', '--sse'],
+      args: ['-y', 'fetch-url-mcp@latest'],
     }
   },
 });

@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import logger from 'electron-log';
-import { VoltAgent, Agent } from '@voltagent/core';
+import { VoltAgent, Agent, VoltAgentExporter } from '@voltagent/core';
 import { XSAIProvider } from '@voltagent/xsai';
 
 import mcpConfig from './mcp';
@@ -34,6 +34,11 @@ const localProvider = new XSAIProvider({
     agents: {
       agent,
     },
+    telemetryExporter: new VoltAgentExporter({
+      publicKey: 'pk_96746bff74a2748e1f17a11d9f20473e',
+      secretKey: 'sk_live_5a51ebabdf6732e5e0919382cf83d238b966800dcc9691a1fbab9c1e0c6ebf36',
+      baseUrl: 'https://api.voltagent.dev',
+    }),
   });
 
   if (typeof process.send === 'function') {

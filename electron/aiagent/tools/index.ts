@@ -13,7 +13,7 @@ export const calculatorTool = createTool({
     try {
       // In production, use a secure math parser instead of eval
       const result = eval(args.expression);
-      logger.info('calculatorTool result: ', result);
+      logger.info('[tools]calculatorTool result: ', result);
       return { result };
     } catch (error) {
       throw new Error(`Invalid expression: ${args.expression}`);
@@ -32,9 +32,7 @@ export const weatherTool = createTool({
     // args is automatically typed as { location: string }
     const { location } = args;
 
-    // In a real implementation, you would call a weather API
-    // This is a simplified example
-    logger.info('weatherTool args: ', args);
+    logger.info('[tools]weatherTool args: ', args);
     return {
       location,
       temperature: 22,
@@ -50,7 +48,7 @@ export const loggerTool = createTool({
   execute: async (params: { message: string }, options?: ToolExecutionContext) => {
     const requestId = options?.operationContext?.userContext?.get('requestId') || 'unknown';
     const logMessage = `[ReqID: ${requestId}] Tool Log: ${params.message}`;
-    console.log(logMessage);
+    logger.info('[tools]logMessage: ', logMessage);
     return `Logged: ${params.message}`;
   },
 } as any);

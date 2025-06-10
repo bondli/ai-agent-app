@@ -22,10 +22,10 @@ export const getCateInfo = async (req: Request, res: Response) => {
     if (result) {
       res.json(result.toJSON());
     } else {
-      res.json({ error: 'Notebook not found' });
+      res.json({ error: 'Cate not found' });
     }
   } catch (error) {
-    console.error('Error getting notebook by ID:', error);
+    console.error('Error getting cate by ID:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -36,14 +36,17 @@ export const getCates = async (req: Request, res: Response) => {
   try {
     const { count, rows } = await Cate.findAndCountAll({
       where: { userId },
-      order: [['createdAt', 'DESC']],
+      order: [
+        ['orders', 'ASC'],
+        ['createdAt', 'DESC'],
+      ],
     });
     res.json({
       count: count || 0,
       data: rows || [],
     });
   } catch (error) {
-    console.error('Error getting notebooks:', error);
+    console.error('Error getting cates:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -58,10 +61,10 @@ export const updateCate = async (req: Request, res: Response) => {
       await result.update({ icon, name, orders });
       res.json(result.toJSON());
     } else {
-      res.json({ error: 'notebook not found' });
+      res.json({ error: 'cate not found' });
     }
   } catch (error) {
-    console.error('Error updating notebook:', error);
+    console.error('Error updating cate:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -73,12 +76,12 @@ export const deleteCate = async (req: Request, res: Response) => {
     const result = await Cate.findByPk(Number(id));
     if (result) {
       await result.destroy();
-      res.json({ message: 'notebook deleted successfully' });
+      res.json({ message: 'cate deleted successfully' });
     } else {
-      res.json({ error: 'notebook not found' });
+      res.json({ error: 'cate not found' });
     }
   } catch (error) {
-    console.error('Error deleting notebook:', error);
+    console.error('Error deleting cate:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

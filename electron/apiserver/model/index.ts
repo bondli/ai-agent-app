@@ -25,7 +25,7 @@ export const sequelize = new Sequelize({
   dialect: 'mysql',
   ...DB_CONFIG,
 
-  logging: (msg) => logger.info(msg),
+  logging: (msg) => logger.info(`[API SQL] ${msg}`),
   dialectOptions: {
     // 设置时区
     timezone: '+08:00',

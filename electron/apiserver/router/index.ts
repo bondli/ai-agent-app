@@ -2,7 +2,7 @@ import express from 'express';
 import { createTopic, getTopicInfo, getTopics, searchTopics, updateTopic, moveTopic, getTopicCounts } from './topic-controller';
 import { createCate, getCateInfo, getCates, updateCate, deleteCate } from './cate-controller';
 import { createUser, userLogin, updateUser } from './user-controller';
-import { mcpServer, mcpServerPost } from './mcp-controller';
+import { mcpServer, mcpMessage } from './mcp-controller';
 
 const router = express.Router();
 
@@ -26,6 +26,6 @@ router.post('/user/update', updateUser);
 
 // 供agent来调用
 router.get('/mcpServer', mcpServer);
-router.post('/mcpServer', mcpServerPost);
+router.post('/mcpMessage', mcpMessage);
 
 export default router;

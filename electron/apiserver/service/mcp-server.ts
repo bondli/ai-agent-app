@@ -31,9 +31,9 @@ myMcpServer.tool(
         parsedDeadline = new Date();
       }
     }
-    logger.info('parsedDeadline', parsedDeadline);
-    logger.info('title', title);
-    logger.info('desc', desc);
+    logger.info('[mcp-server] parsedDeadline', parsedDeadline);
+    logger.info('[mcp-server] title', title);
+    logger.info('[mcp-server] desc', desc);
     // 通过“提醒事件”这个分类名称，获取分类ID
     const cateQueryResult = await Cate.findOne({
       where: {
@@ -41,6 +41,7 @@ myMcpServer.tool(
       },
     });
     if (!cateQueryResult) {
+      logger.error('[mcp-server] 分类“提醒事件”不存在');
       return {
         content: [{ type: 'text', text: '分类“提醒事件”不存在' }],
         isError: true,
@@ -73,6 +74,7 @@ myMcpServer.tool(
       },
     });
 
+    logger.info('[mcp-server] 提醒事件创建成功', JSON.stringify(todo.toJSON()));
     return {
       content: [{ type: 'text', text: JSON.stringify(todo.toJSON()) }],
     };
@@ -81,7 +83,7 @@ myMcpServer.tool(
 
 myMcpServer.tool(
   'writeArticle',
-  '创建一篇文章',
+  '创建一篇文章/日志/笔记',
   {
     title: z.string().describe('标题'),
     url: z.string().describe('链接'),
@@ -89,10 +91,10 @@ myMcpServer.tool(
     cate: z.string().describe('分类'),
   },
   async ({ title, url, desc, cate }) => {
-    logger.info('title', title);
-    logger.info('url', url);
-    logger.info('desc', desc);
-    logger.info('cate', cate);
+    logger.info('[mcp-server] title', title);
+    logger.info('[mcp-server] url', url);
+    logger.info('[mcp-server] desc', desc);
+    logger.info('[mcp-server] cate', cate);
     // 通过传入的分类名称，获取分类ID
     const cateQueryResult = await Cate.findOne({
       where: {
@@ -100,8 +102,9 @@ myMcpServer.tool(
       },
     });
     if (!cateQueryResult) {
+      logger.error('[mcp-server] 分类“' + cate + '”不存在');
       return {
-        content: [{ type: 'text', text: '分类“文章”不存在' }],
+        content: [{ type: 'text', text: '分类“' + cate + '”不存在' }],
         isError: true,
       };
     }
@@ -116,6 +119,7 @@ myMcpServer.tool(
       sourceUrl: url,
     });
     if (!article) {
+      logger.error('[mcp-server] 文章创建失败');
       return {
         content: [{ type: 'text', text: '文章创建失败' }],
         isError: true,
@@ -130,6 +134,7 @@ myMcpServer.tool(
         id: Number(cateId),
       },
     });
+    logger.info('[mcp-server] 文章创建成功', JSON.stringify(article.toJSON()));
     return {
       content: [{ type: 'text', text: JSON.stringify(article.toJSON()) }],
     };

@@ -12,6 +12,7 @@ export type Cate = {
   counts: number;
   icon: React.ReactNode;
   isVirtual?: boolean;
+  orders?: number;
 };
 
 // 文章
@@ -29,7 +30,7 @@ export type Topic = {
 
 export const DEFAULT_CATE = {
   id: 'all',
-  name: '所有代办',
+  name: '所有笔记',
   counts: 0,
   icon: null,
   isVirtual: true,
@@ -38,3 +39,6 @@ export const DEFAULT_CATE = {
 export const SPLIT_LINE = '1px solid #E5E5E5';
 
 export const HEADER_HEIGHT = 64;
+
+export const AGENT_BASE_URL = 'http://localhost:3141/agents';
+export const API_BASE_URL = 'http://localhost:9587/';

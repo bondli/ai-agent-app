@@ -6,9 +6,10 @@ import {
   DeleteOutlined,
   FolderOutlined,
   PlusCircleOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Menu, Popover, Input, App, Empty } from 'antd';
+import { Menu, Popover, Input, App, Empty, Button } from 'antd';
 
 import MenuItem from '@components/MenuItem';
 
@@ -37,7 +38,7 @@ const Category: React.FC = () => {
   // 硬处理，预置的假分类
   const handCateList: Cate[] = [{
     id: 'all',
-    name: '所有待办',
+    name: '所有笔记',
     counts: topicCounts.all || 0,
     icon: <ProductOutlined style={{ fontSize: '16px' }} />,
     isVirtual: true,
@@ -55,7 +56,7 @@ const Category: React.FC = () => {
     isVirtual: true,
   }, {
     id: 'trash',
-    name: '垃圾箱',
+    name: '回收站',
     counts: topicCounts.deleted || 0,
     icon: <DeleteOutlined style={{ fontSize: '16px' }} />,
     isVirtual: true,
@@ -194,7 +195,11 @@ const Category: React.FC = () => {
             onOpenChange={handleModalOpenChange}
             placement="rightTop"
           >
-            <PlusCircleOutlined className={style.addCate} />
+            <Button
+              type="text"
+              size="small"
+              icon={<PlusOutlined />}
+            />
           </Popover>
         </div>
         {

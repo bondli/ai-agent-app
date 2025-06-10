@@ -1,8 +1,10 @@
 import * as path from 'path';
+import * as fs from 'fs';
 import { app, ipcMain, BrowserWindow, globalShortcut } from 'electron';
 import { fork } from 'child_process';
 import Store from 'electron-store';
 import logger from 'electron-log';
+import * as dotenv from 'dotenv';
 
 // 强制设置环境变量
 process.env.NODE_ENV = process.env.ELECTRON_ENV || process.env.NODE_ENV || 'production';
@@ -13,6 +15,26 @@ logger.transports.file.fileName = 'main.log';
 logger.transports.file.level = 'info';
 logger.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}]{scope} {text}';
 logger.transports.file.maxSize = 10 * 1024 * 1024; // 10MB，超过后自动归档
+
+// 载入配置文件
+function loadEnv() {
+  // 生产环境优先 Resources/.env
+  const envPathResource = path.join(process.resourcesPath, '..', '.env');
+  // 开发环境优先 cwd/.env
+  const envPathCwd = path.join(process.cwd(), '.env');
+  let envPath = '';
+
+  if (fs.existsSync(envPathResource)) {
+    envPath = envPathResource;
+  } else if (fs.existsSync(envPathCwd)) {
+    envPath = envPathCwd;
+  }
+
+  if (envPath) {
+    dotenv.config({ path: envPath });
+  }
+  // logger.info('envPath:', envPathResource, envPath, process.env.DB_HOST);
+}
 
 // 数据持久化
 const store = new Store();
@@ -105,8 +127,6 @@ const startApiServer = () => {
   apiServerChild.unref();
 };
 
-startApiServer();
-
 //on parent process exit, terminate child process too.
 process.on('exit', () => {
   aiagentChild.kill();
@@ -178,6 +198,10 @@ app.whenReady().then(() => {
         : mainWindow.webContents.openDevTools();
     });
   }
+
+  loadEnv();
+
+  startApiServer();
 
   createWindow();
 

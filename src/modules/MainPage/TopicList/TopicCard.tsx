@@ -32,7 +32,7 @@ const TopicCard: React.FC<TopicCardProps> = (props) => {
   const { data } = props;
   const { id, desc, createdAt } = data;
 
-  const { selectedTopic, setSelectedTopic, getTopicList } = useContext(MainContext);
+  const { selectedTopic, setSelectedTopic } = useContext(MainContext);
 
   const handleClick = () => {
     userLog('Click Topic:', {id: data.id, title: data.title});
@@ -53,7 +53,7 @@ const TopicCard: React.FC<TopicCardProps> = (props) => {
       <div className={style.cardTitleLeft}>
         <Badge
           status={color[priority]}
-          text={title}
+          text={title.length > 40 ? title.substring(0, 40) + '...' : title}
         />
         <div className={style.time}>截止时间：{dayjs(deadline).format('YY/MM/DD HH:mm')}</div>
       </div>
@@ -61,7 +61,7 @@ const TopicCard: React.FC<TopicCardProps> = (props) => {
   };
 
   // 去掉html的标签，展示纯文本
-  let displayDesc = !desc ? '该代办事项暂时没有详细信息，等你来添加详细的信息' : desc.replace(/(<([^>]+)>)/ig, "");
+  let displayDesc = !desc ? '该笔记暂时没有详细信息，等你来添加详细的信息' : desc.replace(/(<([^>]+)>)/ig, "");
   if (displayDesc.length > 200) {
     displayDesc = displayDesc.substring(0, 200);
   }

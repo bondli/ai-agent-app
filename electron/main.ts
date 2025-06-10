@@ -75,6 +75,7 @@ const startAiAgentServer = () => {
     env: {
       ...process.env,
       NODE_ENV: process.env.NODE_ENV || 'production',
+      DATABASE_PATH: `file:${path.join(app.getPath('userData'), './voltagent/memory.db')}`,
     },
   });
 

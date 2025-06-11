@@ -69,7 +69,7 @@ initIpcRenderer();
 let aiagentServerStatus = '';
 let aiagentChild: any = null;
 const startAiAgentServer = () => {
-  logger.info('AI Agent Server will be start');
+  logger.info('[Main Process] AI Agent Server will be start');
 
   aiagentChild = fork(path.join(__dirname, 'aiagent', 'index'), [], {
     env: {
@@ -80,17 +80,17 @@ const startAiAgentServer = () => {
   });
 
   aiagentChild.on('error', (err) => {
-    logger.info('AI Agent Server error:', err);
+    logger.info('[Main Process] AI Agent Server error:', err);
   });
 
   aiagentChild.on('message', (data) => {
-    logger.info('AI Agent Server stdout: ' , data);
+    logger.info('[Main Process] AI Agent Server stdout: ' , data);
     aiagentServerStatus = 'success';
   });
 
   aiagentChild.on('exit', (code, signal) => {
-    logger.info('AI Agent Server exit code: ', code);
-    logger.info('AI Agent Server exit signal: ', signal);
+    logger.info('[Main Process] AI Agent Server exit code: ', code);
+    logger.info('[Main Process] AI Agent Server exit signal: ', signal);
   });
 
   aiagentChild.unref();
@@ -100,7 +100,7 @@ const startAiAgentServer = () => {
 let apiServerStatus = '';
 let apiServerChild: any = null;
 const startApiServer = () => {
-  logger.info('API Server will be start');
+  logger.info('[Main Process] API Server will be start');
 
   apiServerChild = fork(path.join(__dirname, 'apiserver', 'index'), [], {
     env: {
@@ -110,19 +110,19 @@ const startApiServer = () => {
   });
 
   apiServerChild.on('error', (err) => {
-    logger.info('API Server error:', err);
+    logger.info('[Main Process] API Server error:', err);
   });
 
   apiServerChild.on('message', (data) => {
-    logger.info('API Server stdout: ' , data);
+    logger.info('[Main Process] API Server stdout: ' , data);
     apiServerStatus = 'success';
     // API Sever起来后再去启动AI Agent服务器
     startAiAgentServer();
   });
 
   apiServerChild.on('exit', (code, signal) => {
-    logger.info('API Server exit code: ', code);
-    logger.info('API Server exit signal: ', signal);
+    logger.info('[Main Process] API Server exit code: ', code);
+    logger.info('[Main Process] API Server exit signal: ', signal);
   });
 
   apiServerChild.unref();
@@ -137,7 +137,7 @@ process.on('exit', () => {
 let mainWindow: any = null;
 
 const createWindow = () => {
-  logger.info('main window will be create');
+  logger.info('[Main Process] main window will be create');
   mainWindow = new BrowserWindow({
     title: 'MyAgentApp',
     center: true,
@@ -163,12 +163,12 @@ const createWindow = () => {
       mainWindow.setMenuBarVisibility(false); // 设置菜单栏不可见
       mainWindow.menuBarVisible = false;
     }
-    logger.info('main window is showed');
+    logger.info('[Main Process] main window is showed');
   };
 
   // 服务起来之后再打开界面，否则出现加载不到数据，延迟100ms来检查
   if (aiagentServerStatus === 'success' && apiServerStatus === 'success') {
-    logger.info('server is startup before main window create');
+    logger.info('[Main Process] server is startup before main window create');
     openWin();
   } else {
     let timer = 0;
@@ -191,7 +191,7 @@ const createWindow = () => {
 
 // 绑定 ready 方法，当 electron 应用创建成功时，创建一个窗口。
 app.whenReady().then(() => {
-  logger.info('app is ready');
+  logger.info('[Main Process] app is ready');
   if (!app.isPackaged) {
     globalShortcut.register('CommandOrControl+Alt+D', () => {
       mainWindow.webContents.isDevToolsOpened()

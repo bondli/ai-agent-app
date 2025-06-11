@@ -237,6 +237,7 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
     setMessages([]);
     setInputValue('');
     setConversationId(sessionId);
+    abortController.current?.abort();
   }, [sessionId]);
 
   return (

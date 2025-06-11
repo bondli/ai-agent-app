@@ -41,8 +41,9 @@ export const weatherTool = createTool({
   },
 } as any);
 
+// Logger tool
 export const loggerTool = createTool({
-  name: 'context_aware_logger',
+  name: 'context_logger',
   description: 'Logs a message using the request ID from context.',
   parameters: z.object({ message: z.string() }),
   execute: async (params: { message: string }, options?: ToolExecutionContext) => {

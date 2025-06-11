@@ -21,19 +21,19 @@ app.all('*', (req, res, next) => {
   try {
     // 测试一下数据库是否能连上
     await sequelize.authenticate();
-    logger.info('Connection has been established successfully.');
+    logger.info('[API Server] Connection has been established successfully.');
 
     // 启动服务器前同步所有模型
     await sequelize.sync();
     
     // 启动服务器
     app.listen(9587, () => {
-      logger.info('API Server is running on port 9587');
+      logger.info('[API Server] server is running on port 9587');
       if (typeof process.send === 'function') {
-        process.send('API Server Ready');
+        process.send('server is ready');
       }
     });
   } catch (error) {
-    logger.error('Error starting server:', error);
+    logger.error('[API Server] Error starting server:', error);
   }
 })();

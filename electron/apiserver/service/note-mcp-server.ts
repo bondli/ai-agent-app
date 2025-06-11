@@ -8,12 +8,12 @@ import * as chrono from 'chrono-node';
 import { Topic } from '../model/topic';
 import { Cate } from '../model/cate';
 
-const myMcpServer = new McpServer({
+const noteMcpServer = new McpServer({
   name: 'note-mcp',
   version: '1.0.0',
 });
 
-myMcpServer.tool(
+noteMcpServer.tool(
   'createTodo',
   '创建一个提醒事件',
   {
@@ -81,9 +81,65 @@ myMcpServer.tool(
   }
 );
 
-myMcpServer.tool(
+noteMcpServer.tool(
+  'takeNotes',
+  '记录笔记/备忘/日志',
+  {
+    title: z.string().describe('笔记标题'),
+    desc: z.string().describe('笔记内容'),
+  },
+  async ({ title, desc }) => {
+    logger.info('[mcp-server] title', title);
+    logger.info('[mcp-server] desc', desc);
+    // 通过“提醒事件”这个分类名称，获取分类ID
+    const cateQueryResult = await Cate.findOne({
+      where: {
+        name: '日常备忘',
+      },
+    });
+    if (!cateQueryResult) {
+      logger.error('[mcp-server] 分类“日常备忘”不存在');
+      return {
+        content: [{ type: 'text', text: '分类“日常备忘”不存在' }],
+        isError: true,
+      };
+    }
+    const cateId = cateQueryResult?.toJSON()?.id;
+    const todo = await Topic.create({
+      title,
+      desc,
+      cateId, 
+      tags: '',
+      priority: 2,
+      userId: 1,
+    });
+    
+    if (!todo) {
+      return {
+        content: [{ type: 'text', text: '备忘创建失败' }],
+        isError: true,
+      };
+    }
+    // 在对应的分类下更新数量字段
+    const CateResult = await Cate.findByPk(Number(cateId));
+    CateResult && CateResult.update({
+      counts: Sequelize.literal('counts + 1'),
+    }, {
+      where: {
+        id: Number(cateId),
+      },
+    });
+
+    logger.info('[mcp-server] 备忘创建成功', JSON.stringify(todo.toJSON()));
+    return {
+      content: [{ type: 'text', text: JSON.stringify(todo.toJSON()) }],
+    };
+  }
+);
+
+noteMcpServer.tool(
   'writeArticle',
-  '创建一篇文章/日志/笔记',
+  '创建一篇文章/笔记',
   {
     title: z.string().describe('标题'),
     url: z.string().describe('链接'),
@@ -111,7 +167,7 @@ myMcpServer.tool(
     const cateId = cateQueryResult?.toJSON()?.id;
     const article = await Topic.create({
       title,
-      desc: `文章来源：${url}<br>${desc}`,
+      desc: `内容来源：${url}<br>${desc}`,
       cateId,
       tags: '',
       priority: 2,
@@ -141,4 +197,4 @@ myMcpServer.tool(
   }
 );
 
-export default myMcpServer;
+export default noteMcpServer;

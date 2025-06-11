@@ -139,7 +139,7 @@ noteMcpServer.tool(
 
 noteMcpServer.tool(
   'writeArticle',
-  '创建一篇文章/笔记',
+  '创建文章/笔记',
   {
     title: z.string().describe('标题'),
     url: z.string().describe('链接'),
@@ -172,7 +172,6 @@ noteMcpServer.tool(
       tags: '',
       priority: 2,
       userId: 1,
-      sourceUrl: url,
     });
     if (!article) {
       logger.error('[mcp-server] 文章创建失败');

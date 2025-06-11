@@ -74,8 +74,8 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
         userId: `${userInfo?.id}`,
         conversationId,
         contextLimit: 10,
-        temperature: 0.7,
-        maxTokens: 10000,
+        temperature: 0.5, // 降低温度以提高工具调用的准确性
+        maxTokens: 4000,
       },
     });
 

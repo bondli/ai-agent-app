@@ -53,6 +53,7 @@ const myAgentHooks = createHooks({
   onToolStart: async (args: OnToolStartHookArgs) => {
     const { agent, tool, context } = args;
     logger.info(`[Hook] Agent ${agent.name} starting tool: ${tool.name}`);
+    logger.info(`[Hook] Tool ${tool.name} description: ${tool.description}`);
     // Example: Validate tool inputs or log intent
   },
 

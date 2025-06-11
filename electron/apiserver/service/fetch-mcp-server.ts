@@ -45,14 +45,13 @@ fetchMcpServer.tool(
       if (!result.title || !result.description) {
         result.title = output.match(/<meta property="og:title" content="(.*?)" \/>/)?.[1] || '';
         result.description = output.match(/<meta property="og:description" content="(.*?)" \/>/)?.[1] || '';
-        return {
-          content: [{ type: "text", text: `${JSON.stringify(result)}` }],
-        };
       }
+      logger.info('[mcp-server] 获取URL结果成功', JSON.stringify(result));
       return {
         content: [{ type: "text", text: `${JSON.stringify(result)}` }],
       };
     } catch (error) {
+      logger.error('[mcp-server] 获取URL结果失败', JSON.stringify(error));
       return {
         content: [{ type: "text", text: `${JSON.stringify(error)}` }],
         isError: true,

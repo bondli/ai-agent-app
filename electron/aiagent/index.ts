@@ -8,6 +8,7 @@ import { calculatorTool, weatherTool, loggerTool } from './tools';
 // import KnowledgeBaseRetriever from './rag';
 import myAgentHooks from './hooks';
 import memoryStorage from './memory';
+import basicPrompt from './prompt';
 
 // 本地模型
 const localProvider = new XSAIProvider({
@@ -25,17 +26,28 @@ const telemetryExporter = new VoltAgentExporter({
 (async () => {
   try {
     const allTools = await mcpConfig.getTools();
+    
+    // 输出工具信息用于调试
+    logger.info('[AI Agent Server] 已注册的MCP工具数量:', allTools.length);
+    logger.info('[AI Agent Server] MCP工具列表:', allTools.map(t => t.name));
+    logger.info('[AI Agent Server] 本地工具:', [calculatorTool.name, weatherTool.name, loggerTool.name]);
 
     const agent = new Agent({
       name: 'my-agent',
-      instructions: '你是一个高效的助手，总是用中文做回答，只需直接给出简洁、明确的最终答案，不要输出任何推理过程、思维链、分析过程或解释。',
+      instructions: basicPrompt(),
       // retriever: new KnowledgeBaseRetriever(),
       llm: localProvider,
-      model: process.env.MODEL_NAME || 'qwen3:0.6b',
+      model: process.env.MODEL_NAME || 'qwen3:4b',
       markdown: true,
       hooks: myAgentHooks,
       tools: [calculatorTool, weatherTool, loggerTool, ...allTools],
       memory: memoryStorage, // 记忆自定义，这个不改将会导致electron打包之后会无法写入，从而无法启动服务
+      // 添加一些有助于工具调用的配置
+      parameters: {
+        temperature: 0.5, // 降低温度以提高工具调用的准确性
+        maxTokens: 4000,
+        topP: 0.8,
+      },
     });
 
     new VoltAgent({

@@ -64,20 +64,20 @@ const Header: React.FC<HeaderProps> = (props) => {
   const handleSaveMove = () => {
     userLog('Clcik Save Move Topic, new cate id: ', moveToCateId);
     if (!moveToCateId) {
-      message.error('请先选择目标笔记本');
+      message.error('请先选择目标分类');
       return;
     }
     request.post(`/topic/move?id=${selectedTopic.id}&status=${selectedTopic.status}`, {
       oldCateId: selectedTopic.cateId,
       newCateId: moveToCateId,
     }).then(() => {
-      message.success('该代办事项已成功移动到目标笔记本分类');
+      message.success('该笔记已成功移动到目标笔记本分类');
       setShowMovePanel(false);
       setMoveToCateId(0);
       onUpdated(selectedTopic.id);
     }).catch((err) => {
       userLog('Logic Move Topic Error: ', err);
-      message.error(`移动代办失败：${err.message}`);
+      message.error(`移动笔记失败：${err.message}`);
     });
   };
 
@@ -108,13 +108,13 @@ const Header: React.FC<HeaderProps> = (props) => {
     request.post(`/topic/update?id=${selectedTopic.id}`, {
       priority: newPriority,
     }).then(() => {
-      message.success('该代办事项已更新优先级');
+      message.success('该笔记已更新优先级');
       setShowPriorityPanel(false);
       setNewPriority(0);
       onUpdated(selectedTopic.id, 'updatePriority');
     }).catch((err) => {
       userLog('Logic Update Priority Topic Error: ', err);
-      message.error(`更新代办优先级失败：${err.message}`);
+      message.error(`更新笔记优先级失败：${err.message}`);
     });
   };
 
@@ -135,7 +135,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     request.post(`/topic/update?id=${selectedTopic.id}`, {
       deadline: v,
     }).then(() => {
-      message.success('该代办事项已设置截止时间');
+      message.success('该笔记已设置截止时间');
       onUpdated(selectedTopic.id, 'updateDeadline');
     }).catch((err) => {
       userLog('Logic Update Topic Dealine Error: ', err);
@@ -164,7 +164,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     request.post(`/topic/update?id=${selectedTopic.id}&op=done`, {
       status: 'done',
     }).then(() => {
-      message.success('该代办事项已完成');
+      message.success('该代办已完成');
       onUpdated(selectedTopic.id);
     }).catch((err) => {
       userLog('Logic Todone Topic Error: ', err);
@@ -192,11 +192,11 @@ const Header: React.FC<HeaderProps> = (props) => {
     request.post(`/topic/update?id=${selectedTopic.id}&op=delete`, {
       status: 'deleted',
     }).then(() => {
-      message.success('该代办事项已删除');
+      message.success('该笔记已删除');
       onUpdated(selectedTopic.id);
     }).catch((err) => {
       userLog('Logic Delete Topic Error: ', err);
-      message.error(`删除代办失败：${err.message}`);
+      message.error(`删除笔记失败：${err.message}`);
     });
   };
 
@@ -206,11 +206,11 @@ const Header: React.FC<HeaderProps> = (props) => {
     request.post(`/topic/update?id=${selectedTopic.id}&op=restore`, {
       status: 'undo',
     }).then(() => {
-      message.success('该代办事项已恢复');
+      message.success('该笔记已恢复');
       onUpdated(selectedTopic.id);
     }).catch((err) => {
       userLog('Logic Restore Topic Error: ', err);
-      message.error(`恢复代办失败：${err.message}`);
+      message.error(`恢复笔记失败：${err.message}`);
     });
   };
 
@@ -266,7 +266,7 @@ const Header: React.FC<HeaderProps> = (props) => {
         </Popover>
       </div>
       <Modal
-        title="移动代办"
+        title="移动笔记"
         open={showMovePanel}
         onOk={handleSaveMove}
         onCancel={handleCancelMove}
@@ -287,7 +287,7 @@ const Header: React.FC<HeaderProps> = (props) => {
         </div>
       </Modal>
       <Modal
-        title="更新代办优先级"
+        title="更新笔记优先级"
         open={showPriorityPanel}
         onOk={handleSavePriority}
         onCancel={handleCancelPriority}

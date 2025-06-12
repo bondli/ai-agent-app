@@ -38,9 +38,9 @@ const telemetryExporter = new VoltAgentExporter({
       tools: [calculatorTool, weatherTool, loggerTool, ...allTools],
       memory: memoryStorage, // 记忆自定义，这个不改将会导致electron打包之后会无法写入，从而无法启动服务
       parameters: {
-        temperature: 0.5, // 降低温度以提高工具调用的准确性
-        maxTokens: 4000,
-        topP: 0.8,
+        temperature: 0.7, // 稍微提高温度以获得更快的响应
+        maxTokens: 2000, // 减少最大token数量以提高响应速度
+        topP: 0.9, // 调整topP以平衡质量和速度
       },
     });
 

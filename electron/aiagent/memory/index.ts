@@ -11,10 +11,10 @@ const memoryStorage = new LibSQLStorage({
   tablePrefix: 'my_agent_memory', // Defaults to 'voltagent_memory'
 
   // Optional: Storage limit (max number of messages per user/conversation)
-  // storageLimit: 100, // Defaults to 100
+  storageLimit: 50, // 减少存储限制以提高查询性能，默认100改为50
 
   // Optional: Enable debug logging for the storage provider
-  // debug: true, // Defaults to false
+  debug: false,
 });
 
 export default memoryStorage;

@@ -139,7 +139,7 @@ let mainWindow: any = null;
 const createWindow = () => {
   logger.info('[Main Process] main window will be create');
   mainWindow = new BrowserWindow({
-    title: 'MyAgentApp',
+    title: 'AI Agent',
     center: true,
     autoHideMenuBar: true,
     resizable: true,

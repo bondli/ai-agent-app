@@ -49,21 +49,16 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
   // ==================== Event ====================
   const handleUserSubmit = async (val: string) => {
     if (!val.trim()) return;
-    // 1. 追加用户消息到 messages
+    
+    // 1. 同时追加用户消息和loading状态的assistant消息，避免状态更新时序问题
     setMessages(prev => [
       ...prev,
-      { role: 'user', content: val, status: 'success' }
-    ]);
-
-    // 2. 追加一条"loading"状态的 assistant 消息
-    const assistantIndex = messages.length + 1; // 新消息的下标
-    setMessages(prev => [
-      ...prev,
+      { role: 'user', content: val, status: 'success' },
       { role: 'assistant', content: '', status: 'loading' }
     ]);
     setLoading(true);
 
-    // 3. 构造 fetch 请求参数
+    // 2. 构造 fetch 请求参数
     const controller = new AbortController();
     abortController.current = controller;
     const agentId = 'my-agent'; // 可根据实际情况动态传递
@@ -108,12 +103,18 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
                 if (typeof data.text === 'string') {
                   assistantContent += data.text;
                   setMessages(prev => {
-                    // 只更新最后一条 assistant 消息
                     const updated = [...prev];
-                    updated[assistantIndex] = {
-                      ...updated[assistantIndex],
-                      content: assistantContent,
-                    };
+                    // 从后往前找最近的loading状态的assistant消息进行更新
+                    for (let i = updated.length - 1; i >= 0; i--) {
+                      if (updated[i].role === 'assistant' && updated[i].status === 'loading') {
+                        updated[i] = {
+                          ...updated[i],
+                          content: assistantContent,
+                          status: 'loading',
+                        };
+                        break;
+                      }
+                    }
                     return updated;
                   });
                 }
@@ -124,26 +125,36 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
           });
         }
       }
-      // 6. 结束后将 assistant 消息状态设为 success
+      // 3. 结束后将 assistant 消息状态设为 success
       setMessages(prev => {
         const updated = [...prev];
-        updated[assistantIndex] = {
-          ...updated[assistantIndex],
-          content: assistantContent,
-          status: 'success',
-        };
+        // 从后往前找最近的loading状态的assistant消息
+        for (let i = updated.length - 1; i >= 0; i--) {
+          if (updated[i].role === 'assistant' && updated[i].status === 'loading') {
+            updated[i] = {
+              ...updated[i],
+              content: assistantContent,
+              status: 'success',
+            };
+            break;
+          }
+        }
         return updated;
       });
     } catch (err) {
-      // 7. 错误时设为 error
+      // 4. 错误时设为 error
       setMessages(prev => {
         const updated = [...prev];
-        if (updated[assistantIndex]) {
-          updated[assistantIndex] = {
-            ...updated[assistantIndex],
-            status: 'error',
-            content: '出错了，请重试',
-          };
+        // 从后往前找最近的loading状态的assistant消息
+        for (let i = updated.length - 1; i >= 0; i--) {
+          if (updated[i].role === 'assistant' && updated[i].status === 'loading') {
+            updated[i] = {
+              ...updated[i],
+              status: 'error',
+              content: '出错了，请重试',
+            };
+            break;
+          }
         }
         return updated;
       });
@@ -158,16 +169,23 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
         /** 消息列表 */
         <Bubble.List
           style={{ height: '100%', paddingInline: 16 }}
-          items={messages?.map((i) => ({
-            content: i.content,
-            role: i.role,
-            loading: i.status === 'loading' ? true : false,
-            typing: { step: 5, interval: 20 },
-            messageRender: renderMarkdown,
-          }))}
+          items={messages?.map((i, index) => {
+            return {
+              content: i.content,
+              role: i.role,
+              // 关键修复：只有在loading状态且没有内容时才显示loading UI
+              // 如果有内容，即使是loading状态也要显示内容，实现实时流式效果
+              loading: i.status === 'loading' && !i.content.trim(),
+              // 优化typing效果：流式状态下使用更快的typing速度，完成状态下禁用typing
+              typing: i.status === 'loading' && i.content.trim() 
+                ? { step: 1, interval: 10 } // 流式状态：每次1个字符，间隔10ms
+                : false, // 非流式状态：禁用typing效果
+              messageRender: renderMarkdown,
+            };
+          })}
           roles={{
             assistant: {
-              placement: 'start',
+              placement: 'start', 
               avatar: { icon: <UserOutlined />, style: { background: '#fde3cf' } },
               loadingRender: () => (
                 <Space>

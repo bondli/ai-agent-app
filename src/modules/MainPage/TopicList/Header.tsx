@@ -1,5 +1,5 @@
 import React, { memo, useContext, useState, useEffect, useRef } from 'react';
-import { SearchOutlined, EllipsisOutlined, FormOutlined, DeleteOutlined, DragOutlined } from '@ant-design/icons';
+import { SearchOutlined, EllipsisOutlined, FormOutlined, DeleteOutlined, DragOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Popover, Modal, Input, App } from 'antd';
 
 import { HEADER_HEIGHT, SPLIT_LINE, DEFAULT_CATE } from '@/common/constant';
@@ -15,7 +15,7 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = (props) => {
   const { message, modal } = App.useApp();
   const { onCreated } = props;
-  const { currentCate, setCurrentCate, selectedTopic, getCateList, setTopicList } = useContext(MainContext);
+  const { currentCate, setCurrentCate, selectedTopic, getCateList, setTopicList, getTopicList } = useContext(MainContext);
 
   const [showActionModal, setShowActionModal] = useState(false);
 
@@ -44,8 +44,8 @@ const Header: React.FC<HeaderProps> = (props) => {
       desc: '',
       cateId: currentCate.id,
     }).then((res) => {
-      userLog('Logic Create Topic: ', res);
-      onCreated(res);
+      userLog('Logic Create Topic: ', res.data);
+      onCreated(res.data);
     }).catch((err) => {
       userLog('Logic Create Topic Failed: ', currentCate);
       message.error(`创建失败：${err.message}`);
@@ -177,6 +177,11 @@ const Header: React.FC<HeaderProps> = (props) => {
     setShowActionModal(open);
   };
 
+  // 刷新笔记列表
+  const handleRefresh = () => {
+    getTopicList();
+  };
+
   // 操作笔记本菜单
   const actionMenu = () => {
     return (
@@ -184,6 +189,7 @@ const Header: React.FC<HeaderProps> = (props) => {
         <Button icon={<FormOutlined />} type="text" onClick={handleEdit}>编辑</Button>
         <Button icon={<DeleteOutlined />} type="text" onClick={handleDelete}>删除</Button>
         <Button icon={<DragOutlined />} type="text" onClick={handleOrder}>排序</Button>
+        <Button icon={<ReloadOutlined />} type="text" onClick={handleRefresh}>刷新</Button>
       </div>
     );
   };

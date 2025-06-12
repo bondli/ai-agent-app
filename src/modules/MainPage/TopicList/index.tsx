@@ -8,17 +8,12 @@ import style from './index.module.less';
 const TopicList: React.FC = () => {
   const { currentCate, getCateList, topicList, getTopicList, getTopicCounts, setSelectedTopic } = useContext(MainContext);
 
-  // 当前选中的笔记本发现变化的时候，根据currentNote去获取该笔记本下的所有topic
-  useEffect(() => {
-    getTopicList();
-  }, [currentCate]);
-
-  // 当前选中的笔记本发现变化的时候，去掉原已选择的代办事项
+  // 当前选中的分类发现变化的时候，去掉原已选择的代办事项
   useEffect(() => {
     setSelectedTopic(null);
   }, [currentCate]);
 
-  // 新增代办成功的回调
+  // 新增笔记成功的回调
   const handleNewTopicSuccess = (topic) => {
     // 刷新查询维度的数字
     getTopicCounts();
@@ -26,8 +21,10 @@ const TopicList: React.FC = () => {
     getCateList();
     // 重新获取topic列表
     getTopicList();
-    // 选中新创建的代办事项
-    setSelectedTopic(topic);
+    setTimeout(() => {
+      // 选中新创建的代办事项
+      setSelectedTopic(topic);
+    }, 200);
   };
 
   return (

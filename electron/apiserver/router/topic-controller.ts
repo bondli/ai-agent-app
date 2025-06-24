@@ -306,3 +306,20 @@ export const searchTopics = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+// 彻底删除一个代办
+export const deletedFromTrash = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.query;
+    const result = await Topic.findByPk(Number(id));
+    if (result) {
+      await result.destroy();
+      res.json(result.toJSON());
+    } else {
+      res.json({ error: 'topic not found' });
+    }
+  } catch (error) {
+    console.error('Error deletedFromTrash:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}

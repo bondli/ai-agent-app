@@ -1,5 +1,5 @@
 import express from 'express';
-import { createTopic, getTopicInfo, getTopics, searchTopics, updateTopic, moveTopic, getTopicCounts } from './topic-controller';
+import { createTopic, getTopicInfo, getTopics, searchTopics, updateTopic, moveTopic, getTopicCounts, deletedFromTrash } from './topic-controller';
 import { createCate, getCateInfo, getCates, updateCate, deleteCate } from './cate-controller';
 import { createUser, userLogin, updateUser } from './user-controller';
 import { noteMcp, noteMcpMessage, fetchMcp, fetchMcpMessage } from './mcp-controller';
@@ -13,6 +13,7 @@ router.post('/topic/searchList', searchTopics);
 router.post('/topic/update', updateTopic);
 router.post('/topic/move', moveTopic);
 router.get('/topic/counts', getTopicCounts);
+router.get('/topic/delete', deletedFromTrash);
 
 router.post('/cate/create', createCate);
 router.get('/cate/detail', getCateInfo);

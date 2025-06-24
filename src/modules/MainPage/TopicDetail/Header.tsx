@@ -214,6 +214,18 @@ const Header: React.FC<HeaderProps> = (props) => {
     });
   };
 
+  // 彻底删除
+  const deletedFromTrash = () => {
+    userLog('Click Delete From Trash Topic: ', selectedTopic.id);
+    request.get(`/topic/delete?id=${selectedTopic.id}`).then(() => {
+      message.success('该笔记已彻底删除');
+      onUpdated(selectedTopic.id);
+    }).catch((err) => {
+      userLog('Logic Delete From Trash Topic Error: ', err);
+      message.error(`彻底删除笔记失败：${err.message}`);
+    });
+  };
+
   return (
     <div className={style.header} style={{ height: HEADER_HEIGHT, borderBottom: SPLIT_LINE}}>
       <div className={style.left}>
@@ -251,6 +263,12 @@ const Header: React.FC<HeaderProps> = (props) => {
           // 删除
           selectedTopic.status !== 'deleted' ? (
             <Button icon={<DeleteOutlined />} type="text" onClick={updateToDeleted}></Button>
+          ) : null
+        }
+        {
+          // 如果是删除状态了，加一个彻底删除
+          selectedTopic.status === 'deleted' ? (
+            <Button icon={<DeleteOutlined />} type="text" onClick={deletedFromTrash}></Button>
           ) : null
         }
       </div>

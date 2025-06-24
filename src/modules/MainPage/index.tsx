@@ -15,6 +15,7 @@ import Copilot from './Copilot';
 import Category from './Category';
 import TopicList from './TopicList';
 import TopicDetail from './TopicDetail';
+import SearchBox from './SearchBox';
 
 const { Header } = Layout;
 
@@ -51,6 +52,8 @@ const MainPage: React.FC = () => {
 
       <Header className={style.header}>
         <Logo mode={'dark'} title={'AI Agent'} />
+
+        <SearchBox />
 
         <div className={style.user}>
           <User info={userInfo} onLogout={onLogout} />

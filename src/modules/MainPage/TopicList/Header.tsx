@@ -1,10 +1,10 @@
-import React, { memo, useContext, useState, useEffect, useRef } from 'react';
-import { SearchOutlined, EllipsisOutlined, FormOutlined, DeleteOutlined, DragOutlined, ReloadOutlined } from '@ant-design/icons';
+import React, { memo, useContext, useState, useRef } from 'react';
+import { EllipsisOutlined, FormOutlined, DeleteOutlined, DragOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Popover, Modal, Input, App } from 'antd';
 
-import { HEADER_HEIGHT, SPLIT_LINE, DEFAULT_CATE } from '@/common/constant';
-import { userLog } from '@/common/electron';
-import { MainContext } from '@/common/context';
+import { HEADER_HEIGHT, SPLIT_LINE, DEFAULT_CATE } from '@common/constant';
+import { userLog } from '@common/electron';
+import { MainContext } from '@common/context';
 import request from '@common/request';
 
 import style from './index.module.less';
@@ -15,7 +15,7 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = (props) => {
   const { message, modal } = App.useApp();
   const { onCreated } = props;
-  const { currentCate, setCurrentCate, selectedTopic, getCateList, setTopicList, getTopicList } = useContext(MainContext);
+  const { currentCate, setCurrentCate, getCateList, getTopicList } = useContext(MainContext);
 
   const [showActionModal, setShowActionModal] = useState(false);
 
@@ -25,18 +25,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   const [showOrderPanel, setShowOrderPanel] = useState(false);
   const [tempCateOrder, setTempCateOrder] = useState(0);
 
-  const [showSearchPanel, setShowSearchPanel] = useState(false);
-  const [searchKey, setSearchKey] = useState('');
   const inputRef = useRef(null);
-  const inputSearchRef = useRef(null);
-
-  const [searchDone, setSearchDone] = useState(false);
-  const [searchResultCount, setSearchResultCount] = useState(0);
-
-  useEffect(() => {
-    setSearchDone(false);
-    setSearchKey('');
-  }, [currentCate.id, selectedTopic?.id]);
   
   const createTopic = () => {
     request.post('/topic/add', {
@@ -180,6 +169,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   // 刷新笔记列表
   const handleRefresh = () => {
     getTopicList();
+    getCateList();
   };
 
   // 操作笔记本菜单
@@ -194,68 +184,19 @@ const Header: React.FC<HeaderProps> = (props) => {
     );
   };
 
-  // 搜索框输入
-  const handleSearchChange = (e) => {
-    setSearchKey(e.target.value);
-  };
-
-  // 执行搜索
-  const goSearch = async () => {
-    userLog('Search Topic keyword: ', searchKey);
-    const response = await request.post(`/topic/searchList?noteId=${currentCate.id}`, {
-      searchKey,
-    });
-    const { data, status } = response;
-    if (response.status === 200) {
-      setTopicList(data.data);
-      setSearchResultCount(data.count || 0);
-      setSearchDone(true);
-      setShowSearchPanel(false);
-    }
-  };
-
-  // 打开搜索面板
-  const handleShowSearch = () => {
-    setSearchDone(false);
-    setSearchKey('');
-    setShowSearchPanel(true);
-    setTimeout(() => {
-      inputSearchRef?.current?.focus();
-      inputSearchRef?.current?.select();
-    }, 300);
-  };
-
-  // 关闭搜索面板
-  const handleHideSearch = () => {
-    setShowSearchPanel(false);
-  };
-
   return (
     <div className={style.header} style={{ height: HEADER_HEIGHT, borderBottom: SPLIT_LINE}}>
       <div className={style.title}>
         <span className={style.titleText}>{currentCate.name}</span>
-        {
-          currentCate?.isVirtual ? (
-            <div className={style.searchContainer}>
-              <Button icon={<SearchOutlined />} type="text" onClick={handleShowSearch} style={{ outline: 0 }}></Button>
-              {
-                searchKey && searchDone ? (
-                  <span className={style.searchResult}>搜索关键字 “{searchKey}” 结果共 {searchResultCount} 条</span>
-                ) : null
-              }
-            </div>
-          ) : (
-            <Popover
-              content={actionMenu}
-              trigger="click"
-              open={showActionModal}
-              onOpenChange={handleMenuOpenChange}
-              placement="bottom"
-            >
-              <Button icon={<EllipsisOutlined />} type="text"></Button>
-            </Popover>
-          )
-        }
+        <Popover
+          content={actionMenu}
+          trigger="click"
+          open={showActionModal}
+          onOpenChange={handleMenuOpenChange}
+          placement="bottom"
+        >
+          <Button icon={<EllipsisOutlined />} type="text"></Button>
+        </Popover>
       </div>
       <div>
         <Button type="primary" size="small" onClick={handleNewTopic}>创建笔记</Button>
@@ -267,21 +208,6 @@ const Header: React.FC<HeaderProps> = (props) => {
         onCancel={handleCancelEdit}
       >
         <Input value={tempCateName} onChange={handleCateNameChange} maxLength={8} allowClear ref={inputRef} />
-      </Modal>
-
-      <Modal
-        title="搜索笔记"
-        open={showSearchPanel}
-        onOk={goSearch}
-        onCancel={handleHideSearch}
-      >
-        <Input
-          placeholder="请输入关键字"
-          onChange={handleSearchChange}
-          onPressEnter={goSearch}
-          value={searchKey}
-          ref={inputSearchRef}
-        />
       </Modal>
 
       <Modal

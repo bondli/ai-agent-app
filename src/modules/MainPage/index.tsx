@@ -8,10 +8,10 @@ import { deleteStore } from '@common/electron';
 
 import Logo from '@components/Logo';
 import User from '@components/User';
+import Copilot from '@components/Copilot';
 
 import style from './index.module.less';
 
-import Copilot from './Copilot';
 import Category from './Category';
 import TopicList from './TopicList';
 import TopicDetail from './TopicDetail';

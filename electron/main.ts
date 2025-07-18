@@ -65,37 +65,6 @@ const initIpcRenderer = () => {
 // 定义ipcRenderer监听事件
 initIpcRenderer();
 
-// 启动AI Agent服务器
-let aiagentServerStatus = '';
-let aiagentChild: any = null;
-const startAiAgentServer = () => {
-  logger.info('[Main Process] AI Agent Server will be start');
-
-  aiagentChild = fork(path.join(__dirname, 'aiagent', 'index'), [], {
-    env: {
-      ...process.env,
-      NODE_ENV: process.env.NODE_ENV || 'production',
-      DATABASE_PATH: `file:${path.join(app.getPath('userData'), './voltagent/memory.db')}`,
-    },
-  });
-
-  aiagentChild.on('error', (err) => {
-    logger.info('[Main Process] AI Agent Server error:', err);
-  });
-
-  aiagentChild.on('message', (data) => {
-    logger.info('[Main Process] AI Agent Server stdout: ' , data);
-    aiagentServerStatus = 'success';
-  });
-
-  aiagentChild.on('exit', (code, signal) => {
-    logger.info('[Main Process] AI Agent Server exit code: ', code);
-    logger.info('[Main Process] AI Agent Server exit signal: ', signal);
-  });
-
-  aiagentChild.unref();
-};
-
 // 启动ApiServer服务器
 let apiServerStatus = '';
 let apiServerChild: any = null;
@@ -116,8 +85,6 @@ const startApiServer = () => {
   apiServerChild.on('message', (data) => {
     logger.info('[Main Process] API Server stdout: ' , data);
     apiServerStatus = 'success';
-    // API Sever起来后再去启动AI Agent服务器
-    startAiAgentServer();
   });
 
   apiServerChild.on('exit', (code, signal) => {
@@ -130,7 +97,6 @@ const startApiServer = () => {
 
 //on parent process exit, terminate child process too.
 process.on('exit', () => {
-  aiagentChild.kill();
   apiServerChild.kill();
 });
 
@@ -167,7 +133,7 @@ const createWindow = () => {
   };
 
   // 服务起来之后再打开界面，否则出现加载不到数据，延迟100ms来检查
-  if (aiagentServerStatus === 'success' && apiServerStatus === 'success') {
+  if (apiServerStatus === 'success') {
     logger.info('[Main Process] server is startup before main window create');
     openWin();
   } else {
@@ -175,7 +141,7 @@ const createWindow = () => {
     const t = setInterval(() => {
       timer ++;
       // 5s之后服务还没有起来了，结束轮询，前台报错提示就好
-      if (aiagentServerStatus === 'success' && apiServerStatus === 'success' || timer >= 50) {
+      if (apiServerStatus === 'success' || timer >= 50) {
         openWin();
         timer = 0;
         clearInterval(t);

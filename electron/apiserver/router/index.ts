@@ -2,7 +2,8 @@ import express from 'express';
 import { createTopic, getTopicInfo, getTopics, searchTopics, updateTopic, moveTopic, getTopicCounts, deletedFromTrash } from './topic-controller';
 import { createCate, getCateInfo, getCates, updateCate, deleteCate } from './cate-controller';
 import { createUser, userLogin, updateUser } from './user-controller';
-import { noteMcp, noteMcpMessage, fetchMcp, fetchMcpMessage } from './mcp-controller';
+
+import { agentChat } from './agent-controller';
 
 const router = express.Router();
 
@@ -25,10 +26,7 @@ router.post('/user/register', createUser);
 router.post('/user/login', userLogin);
 router.post('/user/update', updateUser);
 
-// 供agent来调用
-router.get('/mcp/note-mcp', noteMcp);
-router.post('/mcp/note-mcp', noteMcpMessage);
-router.get('/mcp/fetch-mcp', fetchMcp);
-router.post('/mcp/fetch-mcp', fetchMcpMessage);
+// 智能体接口
+router.post('/ai/agentChat', agentChat);
 
 export default router;

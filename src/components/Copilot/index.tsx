@@ -1,18 +1,17 @@
 import { memo, useRef, useEffect, useState, useContext } from 'react';
-import { App, Space, Spin, Typography } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { Space, Spin } from 'antd';
+import { UserOutlined, CommentOutlined } from '@ant-design/icons';
 import {
   Bubble,
-  BubbleProps,
   Sender,
   Suggestion,
   Welcome,
 } from '@ant-design/x';
 
-import markdownit from 'markdown-it';
-
 import { MainContext } from '@common/context';
 import { AGENT_BASE_URL } from '@common/constant';
+
+import MessageContent from './MessageContent';
 
 import style from './index.module.less';
 
@@ -22,21 +21,9 @@ type Message = {
   status: 'loading' | 'success' | 'error';
 };
 
-const AGENT_PLACEHOLDER = 'Generating content, please wait...';
-
-const md = markdownit({ html: true, breaks: true });
-const renderMarkdown: BubbleProps['messageRender'] = (content) => {
-  console.log('content', content);
-  return (
-    <Typography>
-      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: used in demo */}
-      <div dangerouslySetInnerHTML={{ __html: md.render(content) }} className={style.markdown} />
-    </Typography>
-  );
-};
+const AGENT_PLACEHOLDER = '生成中，请稍等...';
 
 const Copilot = ({ sessionId }: { sessionId: string }) => {
-  const { message } = App.useApp();
   const { userInfo } = useContext(MainContext);
 
   const abortController = useRef<AbortController>(null);
@@ -47,7 +34,7 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
   const [conversationId, setConversationId] = useState(sessionId);
 
   // ==================== Event ====================
-  const handleUserSubmit = async (val: string) => {
+  const handleUserSubmit = async (val: string, action?: string) => {
     if (!val.trim()) return;
     
     // 1. 同时追加用户消息和loading状态的assistant消息，避免状态更新时序问题
@@ -61,21 +48,17 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
     // 2. 构造 fetch 请求参数
     const controller = new AbortController();
     abortController.current = controller;
-    const agentId = 'my-agent'; // 可根据实际情况动态传递
-    const url = `${AGENT_BASE_URL}/${agentId}/stream`;
     const body = JSON.stringify({
       input: val,
       options: {
         userId: `${userInfo?.id}`,
         conversationId,
-        contextLimit: 10,
-        temperature: 0.5, // 降低温度以提高工具调用的准确性
-        maxTokens: 4000,
+        action,
       },
     });
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch(AGENT_BASE_URL, {
         method: 'POST',
         headers: {
           'accept': 'text/event-stream',
@@ -142,6 +125,7 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
         return updated;
       });
     } catch (err) {
+      const isAbortError = (err instanceof Error && err.name === 'AbortError');
       // 4. 错误时设为 error
       setMessages(prev => {
         const updated = [...prev];
@@ -151,7 +135,7 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
             updated[i] = {
               ...updated[i],
               status: 'error',
-              content: '出错了，请重试',
+              content: isAbortError ? '用户取消了操作' : '出错了，请重试',
             };
             break;
           }
@@ -180,13 +164,15 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
               typing: i.status === 'loading' && i.content.trim() 
                 ? { step: 1, interval: 10 } // 流式状态：每次1个字符，间隔10ms
                 : false, // 非流式状态：禁用typing效果
-              messageRender: renderMarkdown,
+              messageRender: (content) => {
+                return <MessageContent content={content} onAction={handleUserSubmit} />;
+              },
             };
           })}
           roles={{
             assistant: {
               placement: 'start', 
-              avatar: { icon: <UserOutlined />, style: { background: '#fde3cf' } },
+              avatar: { icon: <CommentOutlined />, style: { background: '#000' } },
               loadingRender: () => (
                 <Space>
                   <Spin size="small" />
@@ -205,8 +191,8 @@ const Copilot = ({ sessionId }: { sessionId: string }) => {
         <>
           <Welcome
             variant="borderless"
-            title="Hello, I'm a AI Agent"
-            description="I can help you to answer questions and solve problems."
+            title={<div style={{ fontSize: 14, fontWeight: 'bold' }}>你好，我是你的笔记AI小助理</div>}
+            description="我可以帮助你回答问题和解决问题。如：笔记搜索，创建笔记，创建备忘，创建提醒事件等"
             className={style.chatWelcome}
           />
         </>

@@ -1,22 +1,18 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { exec } from 'child_process';
 import logger from 'electron-log';
 
-
-const fetchMcpServer = new McpServer({
-  name: 'fetch-mcp',
-  version: '1.0.0',
-});
-
-fetchMcpServer.tool(
-  'fetchUrlContent',
-  '获取URL/网页/页面/地址的内容',
-  {
+class FetchUrlContentTool extends StructuredTool {
+  name = 'fetchUrlContent';
+  description = '获取URL/网页/页面/地址的内容';
+  schema = z.object({
     url: z.string().describe('URL'),
-  },
-  async ({ url }) => {
-    logger.info('[mcp-server] 获取URL/网页/页面/地址的内容', url);
+  });
+
+  protected async _call(input: { url: string }) {
+    const { url } = input;
+    logger.info('[FetchUrlContentTool] 获取URL/网页/页面/地址的内容', url);
     const result = {
       title: '',
       description: '',
@@ -46,18 +42,15 @@ fetchMcpServer.tool(
         result.title = output.match(/<meta property="og:title" content="(.*?)" \/>/)?.[1] || '';
         result.description = output.match(/<meta property="og:description" content="(.*?)" \/>/)?.[1] || '';
       }
-      logger.info('[mcp-server] 获取URL结果成功', JSON.stringify(result));
-      return {
-        content: [{ type: "text", text: `${JSON.stringify(result)}` }],
-      };
+      logger.info('[FetchUrlContentTool] 获取URL结果成功', JSON.stringify(result));
+      return `获取URL内容成功，内容为：${JSON.stringify(result)}`;
     } catch (error) {
-      logger.error('[mcp-server] 获取URL结果失败', JSON.stringify(error));
-      return {
-        content: [{ type: "text", text: `${JSON.stringify(error)}` }],
-        isError: true,
-      };
+      logger.error('[FetchUrlContentTool] 获取URL结果失败', JSON.stringify(error));
+      return `获取URL内容失败，错误信息为：${JSON.stringify(error)}`;
     }
   }
-);
+}
 
-export default fetchMcpServer;
+const fetchUrlContent = new FetchUrlContentTool();
+
+export default fetchUrlContent;

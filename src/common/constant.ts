@@ -40,5 +40,5 @@ export const SPLIT_LINE = '1px solid #E5E5E5';
 
 export const HEADER_HEIGHT = 64;
 
-export const AGENT_BASE_URL = 'http://localhost:3141/agents';
+export const AGENT_BASE_URL = 'http://localhost:9587/ai/agentChat';
 export const API_BASE_URL = 'http://localhost:9587/';

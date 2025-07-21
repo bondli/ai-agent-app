@@ -88,7 +88,7 @@ export const streamAgentResponse = async (
     // console.log('--- 用户反馈是取消 ---');
     stream = await executor.stream(
       new Command({ 
-        resume: '用户取消了操作，请结束当前任务并给出总结。',
+        resume: '用户取消了操作，请结束当前任务。',
       }),
       config,
     );
@@ -126,7 +126,7 @@ export const streamAgentResponse = async (
   const lastMessage = values.messages[values.messages.length - 1] as AIMessage;
   // 下个节点和tool_call的name是askHuman的时候，追加消息给到用户
   if (nextNodes && nextNodes[0] === 'askHuman' && lastMessage.tool_calls?.[0]?.name === 'askHuman') {
-    const feedback = lastMessage.tool_calls?.[0].args.input;
+    const feedback = lastMessage.tool_calls?.[0].args.input || '请补充更多信息';
     const feedbackContent = `<ask_human_input>${feedback}</ask_human_input>`;
     onToken(feedbackContent);
   }

@@ -3,7 +3,7 @@ import { createTopic, getTopicInfo, getTopics, searchTopics, updateTopic, moveTo
 import { createCate, getCateInfo, getCates, updateCate, deleteCate } from './cate-controller';
 import { createUser, userLogin, updateUser } from './user-controller';
 
-import { agentChat } from './agent-controller';
+import { agentChat, generateGraph } from './agent-controller';
 
 const router = express.Router();
 
@@ -28,5 +28,6 @@ router.post('/user/update', updateUser);
 
 // 智能体接口
 router.post('/ai/agentChat', agentChat);
+router.get('/ai/generateGraph', generateGraph);
 
 export default router;

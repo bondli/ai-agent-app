@@ -58,8 +58,10 @@ export const agentExecutor = async () => {
     .addEdge('askHuman', 'agent')
     .addConditionalEdges('agent', shouldContinue);
 
-  return workflow.compile({ checkpointer: memory });
+  const executor = workflow.compile({ checkpointer: memory });
+  executor.name = 'my-agent';
 
+  return executor;
 };
 
 // 流式输出处理
@@ -78,7 +80,7 @@ export const streamAgentResponse = async (
       thread_id: options.conversationId,
       currentUserId: options.currentUserId, // 当前用户ID，从客户端会话的请求头中获取的，传递到智能体中
     },
-    streamMode: 'messages',
+    streamMode: 'messages', // 流式传输 LLM 生成的token
   };
 
   let stream;

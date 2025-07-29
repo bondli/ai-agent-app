@@ -29,3 +29,17 @@ export const agentChat = async (req: Request, res: Response) => {
 
   res.end(); // 关闭连接
 };
+
+export const generateGraph = async (req: Request, res: Response) => {
+  const executor = await agentExecutor();
+  const graph = executor.getGraph();
+  const image = await graph.drawMermaidPng();
+  const arrayBuffer = await image.arrayBuffer();
+  
+  // 设置响应头为图片类型
+  res.setHeader('Content-Type', 'image/png');
+  res.setHeader('Cache-Control', 'no-cache');
+  
+  // 直接返回图片数据
+  return res.send(Buffer.from(arrayBuffer));
+};
